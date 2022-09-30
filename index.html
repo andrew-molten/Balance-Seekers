@@ -5,7 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <link rel="stylesheet" href="CSS/main.css" />
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="img\icons8-tightrope-walking-96.png"
+    />
+    <link rel="stylesheet" href="sass\main.scss" />
+    <script type="module" src="JS\controller.js"></script>
 
     <title>Balance Seekers</title>
   </head>
@@ -13,8 +19,24 @@
   <body>
     <div class="container">
       <header class="header">
+        <img
+          src="img\icons8-tightrope-walking-96.png"
+          alt="logo"
+          class="header__logo"
+        />
         <h3>Balance Seekers</h3>
       </header>
+
+      <form class="add__activity">
+        <input
+          type="text"
+          class="add__activity__input"
+          placeholder="add an activity here"
+        />
+        <button class="btn add__btn">
+          <span>Add</span>
+        </button>
+      </form>
     </div>
   </body>
 </html>

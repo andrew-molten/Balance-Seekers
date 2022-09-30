@@ -1,0 +1,23 @@
+{
+  "name": "balance-seekers",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrewmolten/Balance-Seekers.git"
+  },
+  "author": "Andrew Molten",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andrewmolten/Balance-Seekers/issues"
+  },
+  "homepage": "https://github.com/andrewmolten/Balance-Seekers#readme",
+  "dependencies": {
+    "@parcel/transformer-sass": "^2.7.0",
+    "parcel": "^2.7.0"
+  }
+}
