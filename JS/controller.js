@@ -24,6 +24,13 @@ class App {
     // Event Handlers
     addButton.addEventListener("click", this._processActivity.bind(this));
 
+    activitiesDisplay.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (e.target.closest(".push_up_btn")) {
+        console.log(e.target);
+        this._moveActivityUp();
+      }
+    });
     //Can't get the below button to work - cannot read property of null (reading 'addeventlistener')
     // upButton.addEventListener("click", this._moveActivityUp.bind(this));
 
@@ -33,10 +40,14 @@ class App {
   // Processing Activity
   _processActivity(e) {
     e.preventDefault();
+    if (!activityInput.value) return;
+
     const activity = activityInput.value;
+
     this.#clearInputField();
     // this.#activities.push(activity);
-    this._render(activity);
+    this._storeActivity(activity);
+    this._render(this.#activities);
 
     console.log(this.#activities);
   }
@@ -48,14 +59,21 @@ class App {
         <button class="btn push_up_btn">↑</button>
         <button class="btn push_down_btn">↓</button>
         <button class="btn edit_btn">Edit</button>
+        <button class="btn delete_btn>Delete</button>
     `;
   }
 
-  _render(activity) {
-    const markup = this._generateMarkup(activity);
-    this.#activities.push(markup);
+  _storeActivity(activity) {
+    this.#activities.push(activity);
     this._setLocalStorage();
-    activitiesDisplay.insertAdjacentHTML("afterbegin", markup);
+  }
+
+  _render(activities) {
+    activitiesDisplay.innerHTML = "";
+    activities.forEach((activity) => {
+      const markup = this._generateMarkup(activity);
+      activitiesDisplay.insertAdjacentHTML("afterbegin", markup);
+    });
   }
 
   #clearInputField() {
@@ -74,11 +92,8 @@ class App {
 
     this.#activities = data;
 
+    this._render(this.#activities);
     console.log(this.#activities);
-
-    this.#activities.forEach((activity) =>
-      activitiesDisplay.insertAdjacentHTML("afterbegin", activity)
-    );
   }
 
   reset() {
@@ -88,6 +103,8 @@ class App {
   // Adjusting Activities
   _moveActivityUp() {
     console.log("up up up");
+    // Need to figure out how to get the indexOf the activity from the button
+    // Then use array .splice to delete and insert that into the right place in the array
   }
 }
 
