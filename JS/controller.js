@@ -6,6 +6,7 @@ const activitiesDisplay = document.querySelector(".activities_display");
 const upButton = document.querySelector(".push_up_btn");
 const downButton = document.querySelector(".push_down_btn");
 
+let id = 0;
 // class Activity {
 //   constructor(activityName) {
 //     this.activityName = activityName;
@@ -19,15 +20,14 @@ class App {
 
   constructor() {
     // this.reset();
-    this._getLocalStorage();
-
+    this.init();
     // Event Handlers
     addButton.addEventListener("click", this._processActivity.bind(this));
 
     activitiesDisplay.addEventListener("click", (e) => {
       e.preventDefault();
       if (e.target.closest(".push_up_btn")) {
-        console.log(e.target);
+        console.log(e.target.parentElement.parentElement);
         this._moveActivityUp();
       }
     });
@@ -49,23 +49,36 @@ class App {
     this._storeActivity(activity);
     this._render(this.#activities);
 
+    // RESETTING UI INFO when needed
+    // this.reset();
+
     console.log(this.#activities);
   }
 
   _generateMarkup(activity) {
     return `
-    <li>${activity}</li>
+    <li class="activity_item">${activity.activity} 
         <button class="btn done_btn">🔥</button>
         <button class="btn push_up_btn">↑</button>
         <button class="btn push_down_btn">↓</button>
         <button class="btn edit_btn">Edit</button>
-        <button class="btn delete_btn>Delete</button>
+        <button class="btn delete_btn">Delete</button>
+        </li>
     `;
   }
 
-  _storeActivity(activity) {
-    this.#activities.push(activity);
+  _storeActivity(input) {
+    this.idGenerator();
+    this.#activities.push({
+      activity: input,
+      id: id,
+    });
     this._setLocalStorage();
+  }
+
+  idGenerator() {
+    id = id + 1;
+    console.log(id);
   }
 
   _render(activities) {
@@ -98,6 +111,13 @@ class App {
 
   reset() {
     localStorage.removeItem("activities");
+  }
+
+  init() {
+    this._getLocalStorage();
+    if (this.#activities.length === 0) return (id = 0);
+    id = Math.max(...this.#activities.map((o) => o.id));
+    console.log(id);
   }
 
   // Adjusting Activities
