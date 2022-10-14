@@ -6,7 +6,7 @@ const activitiesDisplay = document.querySelector(".activities_display");
 const upButton = document.querySelector(".push_up_btn");
 const downButton = document.querySelector(".push_down_btn");
 
-let id = 0;
+// let id = -1;
 // class Activity {
 //   constructor(activityName) {
 //     this.activityName = activityName;
@@ -17,6 +17,7 @@ let id = 0;
 class App {
   #parentEl = document.querySelector(".add__activity");
   #activities = [];
+  #deletedActivities = [];
 
   constructor() {
     // this.reset();
@@ -27,14 +28,15 @@ class App {
     activitiesDisplay.addEventListener("click", (e) => {
       e.preventDefault();
       if (e.target.closest(".push_up_btn")) {
-        console.log(e.target.parentElement.parentElement);
-        this._moveActivityUp();
+        this._moveActivity(e, "up");
+      }
+      if (e.target.closest(".push_down_btn")) {
+        this._moveActivity(e, "down");
+      }
+      if (e.target.closest(".delete_btn")) {
+        this._deleteActivity(e);
       }
     });
-    //Can't get the below button to work - cannot read property of null (reading 'addeventlistener')
-    // upButton.addEventListener("click", this._moveActivityUp.bind(this));
-
-    // addButton.addEventListener("click", this.reset());
   }
 
   // Processing Activity
@@ -45,19 +47,13 @@ class App {
     const activity = activityInput.value;
 
     this.#clearInputField();
-    // this.#activities.push(activity);
-    this._storeActivity(activity);
-    this._render(this.#activities);
-
-    // RESETTING UI INFO when needed
-    // this.reset();
-
-    console.log(this.#activities);
+    this._createActivity(activity);
+    this._storeIDAndRender();
   }
 
-  _generateMarkup(activity) {
+  _generateMarkup(activity, id) {
     return `
-    <li class="activity_item">${activity.activity} 
+    <li class="activity_item" id="id${id}">${activity.activity} 
         <button class="btn done_btn">🔥</button>
         <button class="btn push_up_btn">↑</button>
         <button class="btn push_down_btn">↓</button>
@@ -67,24 +63,32 @@ class App {
     `;
   }
 
-  _storeActivity(input) {
-    this.idGenerator();
+  _storeIDAndRender() {
+    this._setIDs(this.#activities);
+    this._setLocalStorage();
+    this._render(this.#activities);
+  }
+
+  _createActivity(input) {
     this.#activities.push({
       activity: input,
-      id: id,
     });
     this._setLocalStorage();
   }
 
-  idGenerator() {
-    id = id + 1;
-    console.log(id);
+  _setIDs(arr) {
+    let id = -1;
+
+    arr.forEach((el) => {
+      id = id + 1;
+      el.id = id;
+    });
   }
 
   _render(activities) {
     activitiesDisplay.innerHTML = "";
     activities.forEach((activity) => {
-      const markup = this._generateMarkup(activity);
+      const markup = this._generateMarkup(activity, activity.id);
       activitiesDisplay.insertAdjacentHTML("afterbegin", markup);
     });
   }
@@ -106,7 +110,6 @@ class App {
     this.#activities = data;
 
     this._render(this.#activities);
-    console.log(this.#activities);
   }
 
   reset() {
@@ -115,16 +118,29 @@ class App {
 
   init() {
     this._getLocalStorage();
-    if (this.#activities.length === 0) return (id = 0);
-    id = Math.max(...this.#activities.map((o) => o.id));
-    console.log(id);
   }
 
   // Adjusting Activities
-  _moveActivityUp() {
-    console.log("up up up");
-    // Need to figure out how to get the indexOf the activity from the button
-    // Then use array .splice to delete and insert that into the right place in the array
+  _moveActivity(e, direction) {
+    // console.log(e.target.parentElement.parentElement);
+    const movingID = +e.target.closest(".activity_item").id.slice(2);
+    if (movingID === this.#activities.length - 1 && direction === "up") return;
+    if (movingID === 0 && direction === "down") return;
+
+    const newID = direction === "up" ? movingID + 1 : movingID - 1;
+    const element = this.#activities[movingID];
+
+    this.#activities.splice(movingID, 1);
+    this.#activities.splice(newID, 0, element);
+    this._storeIDAndRender();
+  }
+
+  _deleteActivity(e) {
+    const deleteID = +e.target.closest(".activity_item").id.slice(2);
+    const element = this.#activities[deleteID];
+    this.#deletedActivities.push(element);
+    this.#activities.splice(deleteID, 1);
+    this._storeIDAndRender();
   }
 }
 
