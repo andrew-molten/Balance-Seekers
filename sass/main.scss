@@ -17,3 +17,16 @@ ol li {
   display: flex;
   padding: 0.5rem 1rem;
 }
+
+.log_session {
+  position: relative;
+  width: 100%;
+}
+.log_session_form {
+  display: none;
+  position: fixed;
+  left: 20%;
+  top: 10%;
+  border: 3px solid #999;
+  background-color: white;
+}

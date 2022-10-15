@@ -5,6 +5,10 @@ const clearButton = document.querySelector(".clear_btn");
 const activitiesDisplay = document.querySelector(".activities_display");
 const upButton = document.querySelector(".push_up_btn");
 const downButton = document.querySelector(".push_down_btn");
+const closeForm = document.querySelector(".close_session_form");
+const submitForm = document.querySelector(".submit_session_form");
+const sessionDate = document.querySelector(".date_form_input");
+const sessionLength = document.querySelector(".length_form_input");
 
 // let id = -1;
 // class Activity {
@@ -13,6 +17,7 @@ const downButton = document.querySelector(".push_down_btn");
 //     console.log(this.activityName);
 //   }
 // }
+let logSessionToID;
 
 class App {
   #parentEl = document.querySelector(".add__activity");
@@ -36,7 +41,13 @@ class App {
       if (e.target.closest(".delete_btn")) {
         this._deleteActivity(e);
       }
+      if (e.target.closest(".log_session_btn")) {
+        this._openLogSessionForm(e);
+      }
     });
+    closeForm.addEventListener("click", this._closeLogSessionForm());
+    // submitForm.addEventListener("click", this._submitForm());
+    //Figute out why this is auto running
   }
 
   // Processing Activity
@@ -54,7 +65,7 @@ class App {
   _generateMarkup(activity, id) {
     return `
     <li class="activity_item" id="id${id}">${activity.activity} 
-        <button class="btn done_btn">🔥</button>
+        <button class="btn log_session_btn">🔥</button>
         <button class="btn push_up_btn">↑</button>
         <button class="btn push_down_btn">↓</button>
         <button class="btn edit_btn">Edit</button>
@@ -72,6 +83,8 @@ class App {
   _createActivity(input) {
     this.#activities.push({
       activity: input,
+      id,
+      sessions: [],
     });
     this._setLocalStorage();
   }
@@ -120,6 +133,16 @@ class App {
     this._getLocalStorage();
   }
 
+  _openLogSessionForm(e) {
+    console.log(e.target.closest(".activity_item"));
+    logSessionToID = +e.target.closest(".activity_item").id.slice(2);
+    document.getElementById("logSessionForm").style.display = "block";
+  }
+
+  _closeLogSessionForm(e) {
+    document.getElementById("logSessionForm").style.display = "hidden";
+  }
+
   // Adjusting Activities
   _moveActivity(e, direction) {
     // console.log(e.target.parentElement.parentElement);
@@ -141,6 +164,16 @@ class App {
     this.#deletedActivities.push(element);
     this.#activities.splice(deleteID, 1);
     this._storeIDAndRender();
+  }
+
+  _submitForm() {
+    const date = sessionDate.value;
+    const length = sessionLength.value;
+    sessionDate.value = "";
+    sessionLength.value = "";
+    const session = [date, length];
+    // this.#activities[logSessionToID].sessions.push(session);
+    console.log(this.#activities[logSessionToID]);
   }
 }
 
