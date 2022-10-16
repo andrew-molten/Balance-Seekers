@@ -6,7 +6,7 @@ const activitiesDisplay = document.querySelector(".activities_display");
 const upButton = document.querySelector(".push_up_btn");
 const downButton = document.querySelector(".push_down_btn");
 const closeForm = document.querySelector(".close_session_form");
-const submitForm = document.querySelector(".submit_session_form");
+const submitFormBtn = document.querySelector(".submit_session_form");
 const sessionDate = document.querySelector(".date_form_input");
 const sessionLength = document.querySelector(".length_form_input");
 
@@ -46,7 +46,7 @@ class App {
       }
     });
     closeForm.addEventListener("click", this._closeLogSessionForm());
-    // submitForm.addEventListener("click", this._submitForm());
+    submitFormBtn.addEventListener("click", (e) => this._submitForm(e));
     //Figute out why this is auto running
   }
 
@@ -83,7 +83,6 @@ class App {
   _createActivity(input) {
     this.#activities.push({
       activity: input,
-      id,
       sessions: [],
     });
     this._setLocalStorage();
@@ -166,14 +165,20 @@ class App {
     this._storeIDAndRender();
   }
 
-  _submitForm() {
+  _submitForm(e) {
+    e.preventDefault();
     const date = sessionDate.value;
     const length = sessionLength.value;
+    const id = logSessionToID;
     sessionDate.value = "";
     sessionLength.value = "";
     const session = [date, length];
-    // this.#activities[logSessionToID].sessions.push(session);
-    console.log(this.#activities[logSessionToID]);
+    this.#activities[id].sessions.push(session);
+    this._setLocalStorage();
+    console.log(this.#activities[id]);
+    console.log(this._closeLogSessionForm);
+    // ^^^^ Why is this function not working
+    // console.log(id);
   }
 }
 
