@@ -14,8 +14,17 @@ ol li {
 }
 
 .activity_item {
-  display: flex;
-  padding: 0.5rem 1rem;
+  // display: flex;
+  // position: relative;
+  padding: 0.25rem 1rem;
+  margin: 0.5rem;
+  border-radius: 10rem;
+  width: fit-content;
+}
+
+.sub_category {
+  // position: absolute;
+  bottom: 0px;
 }
 
 .log_session {
@@ -29,4 +38,42 @@ ol li {
   top: 10%;
   border: 3px solid #999;
   background-color: white;
+}
+
+#id0 {
+  background-color: aqua;
+}
+
+#id1 {
+  background-color: rgb(255, 115, 0);
+}
+#id2 {
+  background-color: rgb(0, 255, 0);
+}
+#id3 {
+  background-color: rgb(255, 0, 0);
+}
+#id4 {
+  background-color: rgb(0, 110, 255);
+}
+#id5 {
+  background-color: rgb(255, 251, 0);
+}
+#id6 {
+  background-color: rgb(251, 0, 255);
+}
+#id7 {
+  background-color: rgb(0, 255, 47);
+}
+#id8 {
+  background-color: rgb(255, 170, 0);
+}
+#id9 {
+  background-color: rgb(255, 0, 144);
+}
+#id10 {
+  background-color: rgb(153, 0, 255);
+}
+#id11 {
+  background-color: rgb(255, 72, 0);
 }

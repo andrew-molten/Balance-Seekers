@@ -9,6 +9,7 @@ const closeForm = document.querySelector(".close_session_form");
 const submitFormBtn = document.querySelector(".submit_session_form");
 const sessionDate = document.querySelector(".date_form_input");
 const sessionLength = document.querySelector(".length_form_input");
+const addSubBtn = document.querySelector(".add_sub_btn");
 
 // let id = -1;
 // class Activity {
@@ -44,10 +45,12 @@ class App {
       if (e.target.closest(".log_session_btn")) {
         this._openLogSessionForm(e);
       }
+      if (e.target.closest(".add_sub_btn")) {
+        this._addSubItem(e);
+      }
     });
     closeForm.addEventListener("click", this._closeLogSessionForm());
     submitFormBtn.addEventListener("click", (e) => this._submitForm(e));
-    //Figute out why this is auto running
   }
 
   // Processing Activity
@@ -70,6 +73,10 @@ class App {
         <button class="btn push_down_btn">↓</button>
         <button class="btn edit_btn">Edit</button>
         <button class="btn delete_btn">Delete</button>
+        <button class="btn add_sub_btn">+</button>
+        <ol class="sub_category">
+       
+        </ol>
         </li>
     `;
   }
@@ -136,10 +143,11 @@ class App {
     console.log(e.target.closest(".activity_item"));
     logSessionToID = +e.target.closest(".activity_item").id.slice(2);
     document.getElementById("logSessionForm").style.display = "block";
+    document.getElementById("logSessionForm").style.visibility = "visible";
   }
 
   _closeLogSessionForm(e) {
-    document.getElementById("logSessionForm").style.display = "hidden";
+    document.getElementById("logSessionForm").style.visibility = "hidden";
   }
 
   // Adjusting Activities
@@ -165,6 +173,18 @@ class App {
     this._storeIDAndRender();
   }
 
+  _addSubItem(e) {
+    // Need to:
+    // insert text box below activity item,
+    // Add button for text box to submit,
+    // Process submitting newSubItem with this:
+    //  "<li class="sub_item">Legs</li>
+    //  <li class="sub_item">Arms</li>"
+
+    const itemID = +e.target.closest(".activity_item").id.slice(2);
+    console.log(e, itemID);
+  }
+
   _submitForm(e) {
     e.preventDefault();
     const date = sessionDate.value;
@@ -176,7 +196,9 @@ class App {
     this.#activities[id].sessions.push(session);
     this._setLocalStorage();
     console.log(this.#activities[id]);
-    console.log(this._closeLogSessionForm);
+    // document.querySelector(".log_session_form").style.display = "hidden";
+    // console.log("Anyone there");
+    this._closeLogSessionForm();
     // ^^^^ Why is this function not working
     // console.log(id);
   }
