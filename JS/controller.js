@@ -48,6 +48,9 @@ class App {
       if (e.target.closest(".add_sub_btn")) {
         this._addSubItem(e);
       }
+      // if (e.target.closest(".add_sub_act_btn")) {
+      //   this._processAddSub(e);
+      // }
     });
     closeForm.addEventListener("click", this._closeLogSessionForm());
     submitFormBtn.addEventListener("click", (e) => this._submitForm(e));
@@ -75,11 +78,12 @@ class App {
         <button class="btn delete_btn">Delete</button>
         <button class="btn add_sub_btn">+</button>
         <ol class="sub_category">
-       
+        
         </ol>
         </li>
     `;
   }
+  // ${!activity.activity.variation}
 
   _storeIDAndRender() {
     this._setIDs(this.#activities);
@@ -91,6 +95,7 @@ class App {
     this.#activities.push({
       activity: input,
       sessions: [],
+      variation: [],
     });
     this._setLocalStorage();
   }
@@ -137,6 +142,7 @@ class App {
 
   init() {
     this._getLocalStorage();
+    console.log(this.#activities);
   }
 
   _openLogSessionForm(e) {
@@ -174,15 +180,50 @@ class App {
   }
 
   _addSubItem(e) {
-    // Need to:
-    // insert text box below activity item,
-    // Add button for text box to submit,
-    // Process submitting newSubItem with this:
-    //  "<li class="sub_item">Legs</li>
-    //  <li class="sub_item">Arms</li>"
-
+    // const parentActivity = e.target.closest(".activity_item");
     const itemID = +e.target.closest(".activity_item").id.slice(2);
     console.log(e, itemID);
+    const subCat = document.getElementById(`id${itemID}`).lastElementChild;
+    // console.log(parentActivity);
+    // Need to:
+    // Guard clause to check for any other text boxes
+
+    // insert text box below activity item,
+    subCat.insertAdjacentHTML(
+      "afterbegin",
+      `<input
+          type="text"
+          class="add_sub_act_input"
+          placeholder="add a sub activity"
+        />
+        <button class="btn add_sub_act_btn">
+          <span>Add</span>`
+    );
+    const subActAddBtn = document.querySelector(".add_sub_act_btn");
+
+    subActAddBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      this._processAddSub(e, subCat, itemID);
+    });
+    // Process submitting newSubItem with this:
+    //  `<li class="sub_item">Legs</li>
+    //  <li class="sub_item">Arms</li>`
+  }
+
+  _processAddSub(e, subCat, itemID) {
+    const addSubInput = document.querySelector(".add_sub_act_input");
+    const input = addSubInput.value;
+    // NEED TO make this ItemID an object
+    this.#activities[itemID].variation.push(input);
+    this._setLocalStorage();
+    // NEED TO assign id's, and fix the HTML insertion so it happens with the render
+    // Possibly see if these functions can be simplified
+    subCat.innerHTML = "";
+    subCat.insertAdjacentHTML(
+      "beforebegin",
+      `<li class="sub_item">${input}</li>`
+    );
+    console.log(this.#activities);
   }
 
   _submitForm(e) {
