@@ -69,6 +69,15 @@ class App {
   }
 
   _generateMarkup(activity, id) {
+    const subCategories = [];
+
+    activity.variation
+      ? activity.variation.forEach((element) =>
+          subCategories.push(`<li class="sub_item">${input}</li>`)
+        )
+      : "";
+    console.log(activity, subCategories);
+
     return `
     <li class="activity_item" id="id${id}">${activity.activity} 
         <button class="btn log_session_btn">🔥</button>
@@ -78,7 +87,7 @@ class App {
         <button class="btn delete_btn">Delete</button>
         <button class="btn add_sub_btn">+</button>
         <ol class="sub_category">
-        
+        ${``}
         </ol>
         </li>
     `;
@@ -213,8 +222,8 @@ class App {
   _processAddSub(e, subCat, itemID) {
     const addSubInput = document.querySelector(".add_sub_act_input");
     const input = addSubInput.value;
-    // NEED TO make this ItemID an object
-    this.#activities[itemID].variation.push(input);
+    if (input === "") return;
+    this.#activities[itemID].variation.push({ type: input });
     this._setLocalStorage();
     // NEED TO assign id's, and fix the HTML insertion so it happens with the render
     // Possibly see if these functions can be simplified
