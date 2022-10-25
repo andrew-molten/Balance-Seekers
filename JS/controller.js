@@ -71,12 +71,14 @@ class App {
   _generateMarkup(activity, id) {
     const subCategories = [];
 
-    activity.variation
-      ? activity.variation.forEach((element) =>
-          subCategories.push(`<li class="sub_item">${input}</li>`)
-        )
-      : "";
-    console.log(activity, subCategories);
+    /////////////////////////////////////////////// NEED TO MAKE THE BELOW CODE WORK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    // activity.variation
+    //   ? activity.variation.forEach((element) =>
+    //       subCategories.push(`<li class="sub_item">${input}</li>`)
+    //     )
+    //   : "";
+    // console.log(activity, subCategories);
 
     return `
     <li class="activity_item" id="id${id}">${activity.activity} 
