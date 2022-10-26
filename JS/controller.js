@@ -203,24 +203,27 @@ class App {
   }
 
   _addSubItem(e) {
-    // const parentActivity = e.target.closest(".activity_item");
-    const itemID = +e.target.closest(".activity_item").id.slice(2);
-    console.log(e, itemID);
-    const subCat = document.getElementById(`id${itemID}`).lastElementChild;
-    // console.log(parentActivity);
-    // Need to:
     // Guard clause to check for any other text boxes
+    if (document.querySelector(".add_sub_act_input")) {
+      const existingVariationInputBox =
+        document.querySelector(".add_sub_act_input");
+      existingVariationInputBox.parentElement.innerHTML = "";
+    }
 
-    // insert text box below activity item,
+    const itemID = +e.target.closest(".activity_item").id.slice(2);
+    const subCat = document.getElementById(`id${itemID}`).lastElementChild;
+
     subCat.insertAdjacentHTML(
       "afterbegin",
-      `<input
+      `<div>
+      <input
           type="text"
           class="add_sub_act_input"
           placeholder="add a sub activity"
         />
         <button class="btn add_sub_act_btn">
-          <span>Add</span>`
+          <span>Add</span>
+          </div>`
     );
     const subActAddBtn = document.querySelector(".add_sub_act_btn");
 
@@ -228,15 +231,12 @@ class App {
       e.preventDefault();
       this._processAddSub(e, subCat, itemID);
     });
-    // Process submitting newSubItem with this:
-    //  `<li class="sub_item">Legs</li>
-    //  <li class="sub_item">Arms</li>`
   }
 
   _processAddSub(e, subCat, itemID) {
-    if (input === "") return;
     const addSubInput = document.querySelector(".add_sub_act_input");
     const input = addSubInput.value;
+    if (input === "") return;
     this.#activities[itemID].variation.push({ type: input });
     this._storeIDAndRender();
   }
