@@ -11,13 +11,6 @@ const sessionDate = document.querySelector(".date_form_input");
 const sessionLength = document.querySelector(".length_form_input");
 const addSubBtn = document.querySelector(".add_sub_btn");
 
-// let id = -1;
-// class Activity {
-//   constructor(activityName) {
-//     this.activityName = activityName;
-//     console.log(this.activityName);
-//   }
-// }
 let logSessionToID;
 
 class App {
