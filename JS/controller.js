@@ -17,6 +17,10 @@ class App {
   #parentEl = document.querySelector(".add__activity");
   #activities = [];
   #deletedActivities = [];
+  touchstartX = 0;
+  touchendX = 0;
+  touchstartY = 0;
+  touchendY = 0;
 
   constructor() {
     // this.reset();
@@ -64,8 +68,6 @@ class App {
   _generateMarkup(activity, id) {
     let subCategories = "";
 
-    /////////////////////////////////////////////// NEED TO MAKE THE BELOW CODE WORK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
     activity.variation
       ? activity.variation.forEach(
           (element) =>
@@ -112,6 +114,7 @@ class App {
       id = id + 1;
       el.id = id;
       if (el.variation.length === 0) return;
+
       // Set ID for any variations
       el.variation.forEach((va) => {
         variationIdDecimal = variationIdDecimal + 1;
@@ -251,6 +254,13 @@ class App {
     this._storeIDAndRender();
     console.log(this.#activities[id]);
     this._closeLogSessionForm();
+  }
+
+  handleswipe() {
+    if (this.touchstartX > this.touchendX) return "left swipe";
+    if (this.touchstartX < this.touchendX) return "right swipe";
+    if (this.touchstartY > this.touchendY) return "down swipe";
+    if (this.touchstartY < this.touchendY) return "up swipe";
   }
 }
 
