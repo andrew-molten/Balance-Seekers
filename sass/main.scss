@@ -1,5 +1,9 @@
 @import "header";
 
+ol {
+  padding-inline-start: 0px;
+}
+
 ol li {
   list-style-type: none;
 }
@@ -12,6 +16,10 @@ ol li {
 .done_btn {
   margin: 0.1rem 0.1rem 0.1rem 0.5rem;
 }
+
+// .activities {
+//   margin: 0rem;
+// }
 
 .activity_item {
   // display: flex;

@@ -21,12 +21,27 @@ class App {
   touchendX = 0;
   touchstartY = 0;
   touchendY = 0;
+  swipeDirection;
 
   constructor() {
     // this.reset();
     this.init();
     // Event Handlers
     addButton.addEventListener("click", this._processActivity.bind(this));
+
+    activitiesDisplay.addEventListener("touchstart", (e) => {
+      this.touchstartX = e.changedTouches[0].screenX;
+      this.touchstartY = e.changedTouches[0].screenY;
+    });
+    activitiesDisplay.addEventListener("touchend", (e) => {
+      this.touchendX = e.changedTouches[0].screenX;
+      this.touchendY = e.changedTouches[0].screenY;
+      this.handleswipe();
+      if (this.swipeDirection === "left") {
+        console.log("You swiped left");
+      }
+      this.swipeDirection = "";
+    });
 
     activitiesDisplay.addEventListener("click", (e) => {
       e.preventDefault();
@@ -257,10 +272,20 @@ class App {
   }
 
   handleswipe() {
-    if (this.touchstartX > this.touchendX) return "left swipe";
-    if (this.touchstartX < this.touchendX) return "right swipe";
-    if (this.touchstartY > this.touchendY) return "down swipe";
-    if (this.touchstartY < this.touchendY) return "up swipe";
+    const diffX = this.touchstartX - this.touchendX;
+    const diffY = this.touchstartY - this.touchendY;
+
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      // Sliding horizontally
+      if (diffX > 0) return (this.swipeDirection = "left");
+      if (diffX < 0) return (this.swipeDirection = "right");
+    }
+
+    if (Math.abs(diffY) > Math.abs(diffX)) {
+      // Sliding vertically
+      if (diffY < 0) return (this.swipeDirection = "down");
+      if (diffY > 0) return (this.swipeDirection = "up");
+    }
   }
 }
 
