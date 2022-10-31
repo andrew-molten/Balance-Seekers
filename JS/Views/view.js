@@ -1,4 +1,12 @@
-export default class View {
+export const wedge = "beef";
+
+export class View {
+  cheese = "silly cheese";
+
+  cheesey() {
+    console.log(this.cheese);
+  }
+
   _render(activities) {
     activitiesDisplay.innerHTML = "";
     activities.forEach((activity) => {
@@ -7,3 +15,5 @@ export default class View {
     });
   }
 }
+
+// export const cheese = "silly";

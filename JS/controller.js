@@ -1,5 +1,9 @@
 import * as model from "./model.js";
-import View from "./Views/view.js";
+// import mainView from "./views/mainView.js";
+import * as view from "./views/view.js";
+import { View } from "./views/view.js";
+const vieew = new View();
+// Issue that I was having is that making the class is fine but then you still need to call the class into being i.e - const view = new View(), which can then be exported and called at the same time or called after importing.
 
 const activityInput = document.querySelector(".add__activity__input");
 const addButton = document.querySelector(".add__btn");
@@ -20,6 +24,10 @@ const variationSelectDiv = document.getElementById("variationSelectDiv");
 const variationSelect = document.getElementById("variationSelect");
 
 let logSessionToID;
+
+console.log(model.foo);
+
+vieew.cheesey();
 
 class App {
   #parentEl = document.querySelector(".add__activity");
@@ -201,11 +209,6 @@ class App {
     localStorage.removeItem("activities");
   }
 
-  init() {
-    this._getLocalStorage();
-    console.log(this.#activities);
-  }
-
   _openLogSessionForm(e) {
     console.log(e.target.closest(".activity_item"));
     logSessionToID = +e.target.closest(".activity_item").id.slice(2);
@@ -343,6 +346,10 @@ class App {
       if (diffY < 0) return (this.swipeDirection = "down");
       if (diffY > 0) return (this.swipeDirection = "up");
     }
+  }
+  init() {
+    this._getLocalStorage();
+    console.log(this.#activities);
   }
 }
 
