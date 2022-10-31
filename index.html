@@ -57,31 +57,44 @@
       <form class="log_session_form" id="logSessionForm">
         <h4>Date</h4>
         <input
-          type="text"
+          type="date"
           class="date_form_input"
-          placeholder=""
+          id="dateOnForm"
         />
         <h4>Session length</h4>
         <input
-          type="text"
+          type="number"
           class="length_form_input"
           placeholder=""
         />
-        <h4>Intensity</h4>
+        <h4>Sets</h4>
         <input
-          type="text"
-          class="intensity_form_input"
+          type="number"
+          class="sets_form_input"
           placeholder=""
         />
+        <h4>Notes</h4>
+        <input
+          type="text"
+          class="notes_form_input"
+          placeholder=""
+        />
+        <div id="variationSelectDiv">
+        <h4>Variation</h4>
+        <select name="variationSelect" id="variationSelect">
+        
+        </select>
+        </div>
 
 
 
-        <button class="submit_session_form"
+        <button class="btn submit_session_form"
           <span>Submit</span>
         </button>
-        <button class="close_session_form"
+        <button class="btn close_session_form"
           <span>Close</span>
         </button>
+        <button class="btn delete_activity_btn">Delete activity</button>
       </form>
     </div>
   </body>

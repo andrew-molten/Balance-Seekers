@@ -1,3 +1,6 @@
+import * as model from "./model.js";
+import View from "./Views/view.js";
+
 const activityInput = document.querySelector(".add__activity__input");
 const addButton = document.querySelector(".add__btn");
 const addActivity = document.querySelector("add__activity");
@@ -7,9 +10,14 @@ const upButton = document.querySelector(".push_up_btn");
 const downButton = document.querySelector(".push_down_btn");
 const closeForm = document.querySelector(".close_session_form");
 const submitFormBtn = document.querySelector(".submit_session_form");
+const deleteActivityBtn = document.querySelector(".delete_activity_btn");
 const sessionDate = document.querySelector(".date_form_input");
 const sessionLength = document.querySelector(".length_form_input");
+const sessionSets = document.querySelector(".sets_form_input");
+const sessionNotes = document.querySelector(".notes_form_input");
 const addSubBtn = document.querySelector(".add_sub_btn");
+const variationSelectDiv = document.getElementById("variationSelectDiv");
+const variationSelect = document.getElementById("variationSelect");
 
 let logSessionToID;
 
@@ -38,34 +46,56 @@ class App {
       this.touchendY = e.changedTouches[0].screenY;
       this.handleswipe();
       if (this.swipeDirection === "left") {
-        console.log("You swiped left");
+        this._moveActivityUpOrDown(e, "down");
+      }
+      if (this.swipeDirection === "right") {
+        this._addSubItem(e);
+      }
+      if (this.swipeDirection === "up") {
+        console.log("You swiped up");
+      }
+      if (this.swipeDirection === "down") {
+        console.log("You swiped down");
       }
       this.swipeDirection = "";
     });
 
+    // Need to implement a double tap for this
+    activitiesDisplay.addEventListener("dblclick", (e) => {
+      console.log("doubleclick");
+      this._addSubItem(e);
+    });
+
+    // Need to fix so that clicking in the text box brings up a keyboard rather than the logSessionForm
     activitiesDisplay.addEventListener("click", (e) => {
+      if (document.querySelector(".add_sub_act_input")) return;
       e.preventDefault();
-      if (e.target.closest(".push_up_btn")) {
-        this._moveActivityUpOrDown(e, "up");
-      }
-      if (e.target.closest(".push_down_btn")) {
-        this._moveActivityUpOrDown(e, "down");
-      }
-      if (e.target.closest(".delete_btn")) {
-        this._deleteActivity(e);
-      }
-      if (e.target.closest(".log_session_btn")) {
+
+      if (e.target.closest(".add_sub_act_btn")) {
+        this._processAddSub(e);
+      } else {
         this._openLogSessionForm(e);
       }
-      if (e.target.closest(".add_sub_btn")) {
-        this._addSubItem(e);
-      }
-      // if (e.target.closest(".add_sub_act_btn")) {
-      //   this._processAddSub(e);
+      // if (e.target.closest(".push_up_btn")) {
+      //   this._moveActivityUpOrDown(e, "up");
+      // }
+      // if (e.target.closest(".push_down_btn")) {
+      //   this._moveActivityUpOrDown(e, "down");
+      // }
+      // if (e.target.closest(".delete_btn")) {
+      //   this._deleteActivity(e);
+      // }
+      // if (e.target.closest(".log_session_btn")) {
+      //   this._openLogSessionForm(e);
+      // }
+      // if (e.target.closest(".add_sub_btn")) {
+      //   this._addSubItem(e);
       // }
     });
+
     closeForm.addEventListener("click", this._closeLogSessionForm());
     submitFormBtn.addEventListener("click", (e) => this._submitForm(e));
+    deleteActivityBtn.addEventListener("click", (e) => this._deleteActivity(e));
   }
 
   // Processing Activity
@@ -93,18 +123,19 @@ class App {
 
     return `
     <li class="activity_item" id="id${id}">${activity.activity} 
-        <button class="btn log_session_btn">🔥</button>
-        <button class="btn push_up_btn">↑</button>
-        <button class="btn push_down_btn">↓</button>
-        <button class="btn edit_btn">Edit</button>
-        <button class="btn delete_btn">Delete</button>
-        <button class="btn add_sub_btn">+</button>
         <ol class="sub_category">
         ${subCategories}
         </ol>
         </li>
     `;
   }
+
+  // Buttons that were on the elements but have been replaced with swipes
+  // <button class="btn log_session_btn">🔥</button>
+  // <button class="btn push_up_btn">↑</button>
+  // <button class="btn push_down_btn">↓</button>
+  // <button class="btn edit_btn">Edit</button>
+  // <button class="btn add_sub_btn">+</button>
 
   _storeIDAndRender() {
     this._setIDs(this.#activities);
@@ -119,6 +150,14 @@ class App {
       variation: [],
     });
     this._setLocalStorage();
+  }
+
+  _render(activities) {
+    activitiesDisplay.innerHTML = "";
+    activities.forEach((activity) => {
+      const markup = this._generateMarkup(activity, activity.id);
+      activitiesDisplay.insertAdjacentHTML("afterbegin", markup);
+    });
   }
 
   _setIDs(arr) {
@@ -136,14 +175,6 @@ class App {
         const variationID = id + "." + variationIdDecimal;
         va.id = +variationID;
       });
-    });
-  }
-
-  _render(activities) {
-    activitiesDisplay.innerHTML = "";
-    activities.forEach((activity) => {
-      const markup = this._generateMarkup(activity, activity.id);
-      activitiesDisplay.insertAdjacentHTML("afterbegin", markup);
     });
   }
 
@@ -180,10 +211,32 @@ class App {
     logSessionToID = +e.target.closest(".activity_item").id.slice(2);
     document.getElementById("logSessionForm").style.display = "block";
     document.getElementById("logSessionForm").style.visibility = "visible";
+    document.getElementById("dateOnForm").valueAsDate = new Date();
+
+    // Creating dropdown menu of variations
+    if (this.#activities[logSessionToID].variation.length === 0) {
+      variationSelectDiv.innerHTML = "";
+    } else {
+      let variations = "";
+
+      this.#activities[logSessionToID].variation
+        ? this.#activities[logSessionToID].variation.forEach(
+            (element) =>
+              (variations =
+                variations +
+                `<option value="${element.type}">${element.type}</option>`)
+          )
+        : "";
+      console.log(variations);
+      variationSelect.insertAdjacentHTML("afterbegin", variations);
+    }
   }
 
   _closeLogSessionForm(e) {
     document.getElementById("logSessionForm").style.visibility = "hidden";
+    sessionLength.value = "";
+    sessionSets.value = "";
+    sessionNotes.value = "";
   }
 
   // Adjusting Activities
@@ -206,7 +259,7 @@ class App {
   }
 
   _deleteActivity(e) {
-    const deleteID = +e.target.closest(".activity_item").id.slice(2);
+    const deleteID = logSessionToID;
     const element = this.#activities[deleteID];
     this.#deletedActivities.push(element);
     this.#activities.splice(deleteID, 1);
@@ -240,11 +293,11 @@ class App {
 
     subActAddBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      this._processAddSub(e, subCat, itemID);
+      this._processAddSub(e, itemID);
     });
   }
 
-  _processAddSub(e, subCat, itemID) {
+  _processAddSub(e, itemID) {
     const addSubInput = document.querySelector(".add_sub_act_input");
     const input = addSubInput.value;
     if (input === "") return;
@@ -256,6 +309,8 @@ class App {
     e.preventDefault();
     const date = sessionDate.value;
     const length = sessionLength.value;
+    const sets = sessionSets.value;
+    const notes = sessionNotes.value;
     const id = logSessionToID;
     const element = this.#activities[id];
     sessionDate.value = "";
@@ -263,6 +318,8 @@ class App {
     const session = {
       date: date,
       length: length,
+      sets: sets,
+      notes: notes,
     };
     element.sessions.push(session);
     this._moveActivity(id, 0, element);
