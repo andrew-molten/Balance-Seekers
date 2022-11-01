@@ -1,17 +1,11 @@
-export const wedge = "beef";
-
-export class View {
-  cheese = "silly cheese";
-
-  cheesey() {
-    console.log(this.cheese);
-  }
+export default class View {
+  _parentElement = document.querySelector(".activities_display");
 
   _render(activities) {
-    activitiesDisplay.innerHTML = "";
+    this._parentElement.innerHTML = "";
     activities.forEach((activity) => {
       const markup = this._generateMarkup(activity, activity.id);
-      activitiesDisplay.insertAdjacentHTML("afterbegin", markup);
+      this._parentElement.insertAdjacentHTML("afterbegin", markup);
     });
   }
 }

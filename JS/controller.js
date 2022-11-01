@@ -1,8 +1,8 @@
 import * as model from "./model.js";
 // import mainView from "./views/mainView.js";
-import * as view from "./views/view.js";
-import { View } from "./views/view.js";
-const vieew = new View();
+
+import mainView from "./views/mainView.js";
+// const view = new View();
 // Issue that I was having is that making the class is fine but then you still need to call the class into being i.e - const view = new View(), which can then be exported and called at the same time or called after importing.
 
 const activityInput = document.querySelector(".add__activity__input");
@@ -24,10 +24,6 @@ const variationSelectDiv = document.getElementById("variationSelectDiv");
 const variationSelect = document.getElementById("variationSelect");
 
 let logSessionToID;
-
-console.log(model.foo);
-
-vieew.cheesey();
 
 class App {
   #parentEl = document.querySelector(".add__activity");
@@ -118,37 +114,10 @@ class App {
     this._storeIDAndRender();
   }
 
-  _generateMarkup(activity, id) {
-    let subCategories = "";
-
-    activity.variation
-      ? activity.variation.forEach(
-          (element) =>
-            (subCategories =
-              subCategories + `<li class="sub_item">${element.type}</li>`)
-        )
-      : "";
-
-    return `
-    <li class="activity_item" id="id${id}">${activity.activity} 
-        <ol class="sub_category">
-        ${subCategories}
-        </ol>
-        </li>
-    `;
-  }
-
-  // Buttons that were on the elements but have been replaced with swipes
-  // <button class="btn log_session_btn">🔥</button>
-  // <button class="btn push_up_btn">↑</button>
-  // <button class="btn push_down_btn">↓</button>
-  // <button class="btn edit_btn">Edit</button>
-  // <button class="btn add_sub_btn">+</button>
-
   _storeIDAndRender() {
     this._setIDs(this.#activities);
     this._setLocalStorage();
-    this._render(this.#activities);
+    mainView._render(this.#activities);
   }
 
   _createActivity(input) {
@@ -158,14 +127,6 @@ class App {
       variation: [],
     });
     this._setLocalStorage();
-  }
-
-  _render(activities) {
-    activitiesDisplay.innerHTML = "";
-    activities.forEach((activity) => {
-      const markup = this._generateMarkup(activity, activity.id);
-      activitiesDisplay.insertAdjacentHTML("afterbegin", markup);
-    });
   }
 
   _setIDs(arr) {
@@ -202,7 +163,7 @@ class App {
 
     this.#activities = data;
 
-    this._render(this.#activities);
+    mainView._render(this.#activities);
   }
 
   reset() {
