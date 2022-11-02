@@ -8,6 +8,10 @@ export default class View {
       this._parentElement.insertAdjacentHTML("afterbegin", markup);
     });
   }
+
+  _clearInputField() {
+    document.querySelector(".add__activity__input").value = "";
+  }
 }
 
 // export const cheese = "silly";

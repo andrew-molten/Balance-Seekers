@@ -20,15 +20,8 @@ const sessionLength = document.querySelector(".length_form_input");
 const sessionSets = document.querySelector(".sets_form_input");
 const sessionNotes = document.querySelector(".notes_form_input");
 const addSubBtn = document.querySelector(".add_sub_btn");
-const variationSelectDiv = document.getElementById("variationSelectDiv");
-const variationSelect = document.getElementById("variationSelect");
-
-let logSessionToID;
 
 class App {
-  #parentEl = document.querySelector(".add__activity");
-  #activities = [];
-  #deletedActivities = [];
   touchstartX = 0;
   touchendX = 0;
   touchstartY = 0;
@@ -78,7 +71,7 @@ class App {
       if (e.target.closest(".add_sub_act_btn")) {
         this._processAddSub(e);
       } else {
-        this._openLogSessionForm(e);
+        mainView._openLogSessionForm(e, model.activities);
       }
       // if (e.target.closest(".push_up_btn")) {
       //   this._moveActivityUpOrDown(e, "up");
@@ -97,8 +90,10 @@ class App {
       // }
     });
 
-    closeForm.addEventListener("click", this._closeLogSessionForm());
-    submitFormBtn.addEventListener("click", (e) => this._submitForm(e));
+    closeForm.addEventListener("click", mainView._closeLogSessionForm());
+    submitFormBtn.addEventListener("click", (e) =>
+      this._submitForm(e, mainView.logSessionToID)
+    );
     deleteActivityBtn.addEventListener("click", (e) => this._deleteActivity(e));
   }
 
@@ -109,124 +104,41 @@ class App {
 
     const activity = activityInput.value;
 
-    this.#clearInputField();
-    this._createActivity(activity);
+    mainView._clearInputField();
+    model.createActivity(activity);
     this._storeIDAndRender();
   }
 
   _storeIDAndRender() {
-    this._setIDs(this.#activities);
-    this._setLocalStorage();
-    mainView._render(this.#activities);
-  }
-
-  _createActivity(input) {
-    this.#activities.push({
-      activity: input,
-      sessions: [],
-      variation: [],
-    });
-    this._setLocalStorage();
-  }
-
-  _setIDs(arr) {
-    let id = -1;
-
-    arr.forEach((el) => {
-      let variationIdDecimal = -1;
-      id = id + 1;
-      el.id = id;
-      if (el.variation.length === 0) return;
-
-      // Set ID for any variations
-      el.variation.forEach((va) => {
-        variationIdDecimal = variationIdDecimal + 1;
-        const variationID = id + "." + variationIdDecimal;
-        va.id = +variationID;
-      });
-    });
-  }
-
-  #clearInputField() {
-    this.#parentEl.querySelector(".add__activity__input").value = "";
-  }
-
-  //Storage
-  _setLocalStorage() {
-    localStorage.setItem("activities", JSON.stringify(this.#activities));
-  }
-
-  _getLocalStorage() {
-    const data = JSON.parse(localStorage.getItem("activities"));
-
-    if (!data) return;
-
-    this.#activities = data;
-
-    mainView._render(this.#activities);
-  }
-
-  reset() {
-    localStorage.removeItem("activities");
-  }
-
-  _openLogSessionForm(e) {
-    console.log(e.target.closest(".activity_item"));
-    logSessionToID = +e.target.closest(".activity_item").id.slice(2);
-    document.getElementById("logSessionForm").style.display = "block";
-    document.getElementById("logSessionForm").style.visibility = "visible";
-    document.getElementById("dateOnForm").valueAsDate = new Date();
-
-    // Creating dropdown menu of variations
-    if (this.#activities[logSessionToID].variation.length === 0) {
-      variationSelectDiv.innerHTML = "";
-    } else {
-      let variations = "";
-
-      this.#activities[logSessionToID].variation
-        ? this.#activities[logSessionToID].variation.forEach(
-            (element) =>
-              (variations =
-                variations +
-                `<option value="${element.type}">${element.type}</option>`)
-          )
-        : "";
-      console.log(variations);
-      variationSelect.insertAdjacentHTML("afterbegin", variations);
-    }
-  }
-
-  _closeLogSessionForm(e) {
-    document.getElementById("logSessionForm").style.visibility = "hidden";
-    sessionLength.value = "";
-    sessionSets.value = "";
-    sessionNotes.value = "";
+    model.setIDs(model.activities);
+    model.setLocalStorage();
+    mainView._render(model.activities);
   }
 
   // Adjusting Activities
   _moveActivityUpOrDown(e, direction) {
     // console.log(e.target.parentElement.parentElement);
     const movingID = +e.target.closest(".activity_item").id.slice(2);
-    if (movingID === this.#activities.length - 1 && direction === "up") return;
+    if (movingID === model.activities.length - 1 && direction === "up") return;
     if (movingID === 0 && direction === "down") return;
 
     const newID = direction === "up" ? movingID + 1 : movingID - 1;
-    const element = this.#activities[movingID];
+    const element = model.activities[movingID];
 
     this._moveActivity(movingID, newID, element);
     this._storeIDAndRender();
   }
 
   _moveActivity(oldID, newID, element) {
-    this.#activities.splice(oldID, 1);
-    this.#activities.splice(newID, 0, element);
+    model.activities.splice(oldID, 1);
+    model.activities.splice(newID, 0, element);
   }
 
   _deleteActivity(e) {
     const deleteID = logSessionToID;
-    const element = this.#activities[deleteID];
-    this.#deletedActivities.push(element);
-    this.#activities.splice(deleteID, 1);
+    const element = model.activities[deleteID];
+    model.deletedActivities.push(element);
+    model.activities.splice(deleteID, 1);
     this._storeIDAndRender();
   }
 
@@ -265,18 +177,18 @@ class App {
     const addSubInput = document.querySelector(".add_sub_act_input");
     const input = addSubInput.value;
     if (input === "") return;
-    this.#activities[itemID].variation.push({ type: input });
+    model.activities[itemID].variation.push({ type: input });
     this._storeIDAndRender();
   }
 
-  _submitForm(e) {
+  _submitForm(e, logSessionToID) {
     e.preventDefault();
     const date = sessionDate.value;
     const length = sessionLength.value;
     const sets = sessionSets.value;
     const notes = sessionNotes.value;
     const id = logSessionToID;
-    const element = this.#activities[id];
+    const element = model.activities[id];
     sessionDate.value = "";
     sessionLength.value = "";
     const session = {
@@ -288,8 +200,8 @@ class App {
     element.sessions.push(session);
     this._moveActivity(id, 0, element);
     this._storeIDAndRender();
-    console.log(this.#activities[id]);
-    this._closeLogSessionForm();
+    console.log(model.activities[id]);
+    mainView._closeLogSessionForm();
   }
 
   handleswipe() {
@@ -309,8 +221,9 @@ class App {
     }
   }
   init() {
-    this._getLocalStorage();
-    console.log(this.#activities);
+    model.getLocalStorage();
+    console.log(model.activities);
+    mainView._render(model.activities);
   }
 }
 
