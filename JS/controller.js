@@ -181,6 +181,7 @@ class App {
     this._storeIDAndRender();
   }
 
+  // Uncaught TypeError: Cannot read properties of undefined (reading 'sessions')
   _submitForm(e, logSessionToID) {
     e.preventDefault();
     const date = sessionDate.value;
