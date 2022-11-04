@@ -1,8 +1,6 @@
 import * as model from "./model.js";
-// import mainView from "./views/mainView.js";
-
 import mainView from "./views/mainView.js";
-// const view = new View();
+import workoutView from "./views/workoutView.js";
 // Issue that I was having is that making the class is fine but then you still need to call the class into being i.e - const view = new View(), which can then be exported and called at the same time or called after importing.
 
 const activityInput = document.querySelector(".add__activity__input");
@@ -20,6 +18,9 @@ const sessionLength = document.querySelector(".length_form_input");
 const sessionSets = document.querySelector(".sets_form_input");
 const sessionNotes = document.querySelector(".notes_form_input");
 const addSubBtn = document.querySelector(".add_sub_btn");
+// const workoutViewBtn = document.querySelector(".workout_view_btn");
+
+let IdToEdit;
 
 class App {
   touchstartX = 0;
@@ -33,8 +34,13 @@ class App {
     this.init();
     // Event Handlers
     addButton.addEventListener("click", this._processActivity.bind(this));
+    // workoutViewBtn.addEventListener("click", (e) => {
+    //   e.preventDefault();
+    //   workoutView._render(model.activities);
+    // });
 
     activitiesDisplay.addEventListener("touchstart", (e) => {
+      this._setIdToEdit(e);
       this.touchstartX = e.changedTouches[0].screenX;
       this.touchstartY = e.changedTouches[0].screenY;
     });
@@ -43,7 +49,8 @@ class App {
       this.touchendY = e.changedTouches[0].screenY;
       this.handleswipe();
       if (this.swipeDirection === "left") {
-        this._moveActivityUpOrDown(e, "down");
+        model._moveActivityUpOrDown(e, "down", IdToEdit);
+        this._storeIDAndRender();
       }
       if (this.swipeDirection === "right") {
         this._addSubItem(e);
@@ -58,26 +65,28 @@ class App {
     });
 
     // Need to implement a double tap for this
-    activitiesDisplay.addEventListener("dblclick", (e) => {
-      console.log("doubleclick");
-      this._addSubItem(e);
-    });
+    // activitiesDisplay.addEventListener("dblclick", (e) => {
+    //   this._setIdToEdit(e)
+    //   console.log("doubleclick");
+    //   this._addSubItem(e);
+    // });
 
-    // Need to fix so that clicking in the text box brings up a keyboard rather than the logSessionForm
     activitiesDisplay.addEventListener("click", (e) => {
-      if (document.querySelector(".add_sub_act_input")) return;
       e.preventDefault();
+      // Guard clauses to stop logSession Form if variation text box exists or button is pressed
+      if (
+        document.querySelector(".add_sub_act_input") ||
+        e.target.classList.contains("add_sub_act_btn")
+      )
+        return;
 
-      if (e.target.closest(".add_sub_act_btn")) {
-        this._processAddSub(e);
-      } else {
-        mainView._openLogSessionForm(e, model.activities);
-      }
+      mainView._openLogSessionForm(e, model.activities, IdToEdit);
+
       // if (e.target.closest(".push_up_btn")) {
-      //   this._moveActivityUpOrDown(e, "up");
+      //   model._moveActivityUpOrDown(e, "up");
       // }
       // if (e.target.closest(".push_down_btn")) {
-      //   this._moveActivityUpOrDown(e, "down");
+      //   model._moveActivityUpOrDown(e, "down");
       // }
       // if (e.target.closest(".delete_btn")) {
       //   this._deleteActivity(e);
@@ -91,10 +100,17 @@ class App {
     });
 
     closeForm.addEventListener("click", mainView._closeLogSessionForm());
-    submitFormBtn.addEventListener("click", (e) =>
-      this._submitForm(e, mainView.logSessionToID)
-    );
+    submitFormBtn.addEventListener("click", (e) => this._submitForm(e));
     deleteActivityBtn.addEventListener("click", (e) => this._deleteActivity(e));
+  }
+
+  //controller.js:106 Uncaught TypeError: Cannot read properties of null (reading 'id')
+  _setIdToEdit(e) {
+    IdToEdit = +e.target.closest(".activity_item").id.slice(2);
+  }
+
+  switchToWorkoutView() {
+    workoutView._render(model.activities);
   }
 
   // Processing Activity
@@ -115,27 +131,9 @@ class App {
     mainView._render(model.activities);
   }
 
-  // Adjusting Activities
-  _moveActivityUpOrDown(e, direction) {
-    // console.log(e.target.parentElement.parentElement);
-    const movingID = +e.target.closest(".activity_item").id.slice(2);
-    if (movingID === model.activities.length - 1 && direction === "up") return;
-    if (movingID === 0 && direction === "down") return;
-
-    const newID = direction === "up" ? movingID + 1 : movingID - 1;
-    const element = model.activities[movingID];
-
-    this._moveActivity(movingID, newID, element);
-    this._storeIDAndRender();
-  }
-
-  _moveActivity(oldID, newID, element) {
-    model.activities.splice(oldID, 1);
-    model.activities.splice(newID, 0, element);
-  }
-
   _deleteActivity(e) {
-    const deleteID = logSessionToID;
+    e.preventDefault();
+    const deleteID = IdToEdit;
     const element = model.activities[deleteID];
     model.deletedActivities.push(element);
     model.activities.splice(deleteID, 1);
@@ -150,45 +148,46 @@ class App {
       existingVariationInputBox.parentElement.innerHTML = "";
     }
 
-    const itemID = +e.target.closest(".activity_item").id.slice(2);
-    const subCat = document.getElementById(`id${itemID}`).lastElementChild;
+    const subCat = document.getElementById(`id${IdToEdit}`).lastElementChild;
 
     subCat.insertAdjacentHTML(
       "afterbegin",
-      `<div>
+      `<div class="add_sub_input_container">
       <input
           type="text"
           class="add_sub_act_input"
           placeholder="add a sub activity"
         />
-        <button class="btn add_sub_act_btn">
-          <span>Add</span>
+        <button class="btn add_sub_act_btn">Add</button>
           </div>`
     );
-    const subActAddBtn = document.querySelector(".add_sub_act_btn");
 
+    const subActAddBtn = document.querySelector(".add_sub_act_btn");
     subActAddBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      this._processAddSub(e, itemID);
+      this._processAddSub(e, IdToEdit);
     });
   }
 
   _processAddSub(e, itemID) {
     const addSubInput = document.querySelector(".add_sub_act_input");
+    const addSubInputContainer = document.querySelector(
+      ".add_sub_input_container"
+    );
     const input = addSubInput.value;
     if (input === "") return;
     model.activities[itemID].variation.push({ type: input });
+    addSubInputContainer.innerHTML = "";
     this._storeIDAndRender();
   }
 
-  // Uncaught TypeError: Cannot read properties of undefined (reading 'sessions')
-  _submitForm(e, logSessionToID) {
+  _submitForm(e) {
     e.preventDefault();
     const date = sessionDate.value;
     const length = sessionLength.value;
     const sets = sessionSets.value;
     const notes = sessionNotes.value;
-    const id = logSessionToID;
+    const id = IdToEdit;
     const element = model.activities[id];
     sessionDate.value = "";
     sessionLength.value = "";
@@ -199,9 +198,8 @@ class App {
       notes: notes,
     };
     element.sessions.push(session);
-    this._moveActivity(id, 0, element);
+    model._moveActivity(id, 0, element);
     this._storeIDAndRender();
-    console.log(model.activities[id]);
     mainView._closeLogSessionForm();
   }
 

@@ -15,13 +15,25 @@ export const createActivity = function (input) {
 // Storage
 export const setLocalStorage = function () {
   localStorage.setItem("activities", JSON.stringify(this.activities));
+  localStorage.setItem(
+    "deletedActivities",
+    JSON.stringify(this.deletedActivities)
+  );
 };
 export const getLocalStorage = function () {
   const data = JSON.parse(localStorage.getItem("activities"));
+  const deletedData = JSON.parse(localStorage.getItem("deletedActivities"));
+  if (!data) {
+    this.activities = [];
+  } else {
+    this.activities = data;
+  }
 
-  if (!data) return;
-
-  this.activities = data;
+  if (!deletedData) {
+    this.deletedActivities = [];
+  } else {
+    this.deletedActivities = deletedData;
+  }
 };
 
 // Set ID's
@@ -41,6 +53,23 @@ export const setIDs = function (arr) {
       va.id = +variationID;
     });
   });
+};
+
+// Adjusting Activities
+export const _moveActivityUpOrDown = function (e, direction, movingID) {
+  // const movingID = +e.target.closest(".activity_item").id.slice(2);
+  if (movingID === model.activities.length - 1 && direction === "up") return;
+  if (movingID === 0 && direction === "down") return;
+
+  const newID = direction === "up" ? movingID + 1 : movingID - 1;
+  const element = this.activities[movingID];
+
+  this._moveActivity(movingID, newID, element);
+};
+
+export const _moveActivity = function (oldID, newID, element) {
+  this.activities.splice(oldID, 1);
+  this.activities.splice(newID, 0, element);
 };
 
 const reset = function () {

@@ -1,17 +1,19 @@
 export default class View {
   _parentElement = document.querySelector(".activities_display");
+  _activities;
 
   _render(activities) {
-    this._parentElement.innerHTML = "";
-    activities.forEach((activity) => {
-      const markup = this._generateMarkup(activity, activity.id);
-      this._parentElement.insertAdjacentHTML("afterbegin", markup);
-    });
+    this._clear();
+    this._activities = activities;
+    const markup = this._generateMarkup();
+    this._parentElement.insertAdjacentHTML("afterbegin", markup);
   }
 
   _clearInputField() {
     document.querySelector(".add__activity__input").value = "";
   }
-}
 
-// export const cheese = "silly";
+  _clear() {
+    this._parentElement.innerHTML = "";
+  }
+}

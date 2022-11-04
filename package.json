@@ -6,6 +6,7 @@
     "start": "parcel index.html",
     "build": "parcel build index.html"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/andrewmolten/Balance-Seekers.git"
