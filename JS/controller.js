@@ -1,5 +1,6 @@
-import * as model from "./model.js";
+import model from "./model.js";
 import mainView from "./views/mainView.js";
+
 import workoutView from "./views/workoutView.js";
 // Issue that I was having is that making the class is fine but then you still need to call the class into being i.e - const view = new View(), which can then be exported and called at the same time or called after importing.
 
@@ -109,9 +110,9 @@ class App {
     IdToEdit = +e.target.closest(".activity_item").id.slice(2);
   }
 
-  switchToWorkoutView() {
-    workoutView._render(model.activities);
-  }
+  // switchToWorkoutView() {
+  //   workoutView._render(model.activities);
+  // }
 
   // Processing Activity
   _processActivity(e) {
