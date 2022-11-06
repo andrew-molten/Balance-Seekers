@@ -1,3 +1,5 @@
+import config from "./config.js";
+
 class Model {
   state = {
     activities: [],

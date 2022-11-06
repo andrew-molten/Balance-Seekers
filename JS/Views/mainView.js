@@ -25,7 +25,6 @@ class MainView extends View {
     let lastWorkoutDate = "";
     if (activityLength > 0) {
       lastWorkoutDate = activity.sessions[activityLength - 1].date;
-      console.log(lastWorkoutDate);
     }
 
     return `

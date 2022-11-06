@@ -1,5 +1,6 @@
 import model from "./model.js";
 import mainView from "./views/mainView.js";
+import config from "./config.js";
 
 import workoutView from "./views/workoutView.js";
 // Issue that I was having is that making the class is fine but then you still need to call the class into being i.e - const view = new View(), which can then be exported and called at the same time or called after importing.
@@ -184,7 +185,7 @@ class App {
 
   _submitForm(e) {
     e.preventDefault();
-    const date = sessionDate.value;
+    const date = new Date(sessionDate.value).toLocaleDateString(config.locale);
     const length = sessionLength.value;
     const sets = sessionSets.value;
     const notes = sessionNotes.value;
@@ -208,6 +209,9 @@ class App {
   handleswipe() {
     const diffX = this.touchstartX - this.touchendX;
     const diffY = this.touchstartY - this.touchendY;
+
+    if (Math.abs(diffX) < 10 && Math.abs(diffY) < 10)
+      return (this.swipeDirection = "");
 
     if (Math.abs(diffX) > Math.abs(diffY)) {
       // Sliding horizontally

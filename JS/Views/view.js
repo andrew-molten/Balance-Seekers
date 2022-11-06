@@ -1,3 +1,5 @@
+import config from "../config.js";
+
 export default class View {
   _parentElement = document.querySelector(".activities_display");
   _activities;
