@@ -190,6 +190,7 @@ class App {
     const notes = sessionNotes.value;
     const id = IdToEdit;
     const element = model.activities[id];
+    const activitiesLength = model.activities.length;
     sessionDate.value = "";
     sessionLength.value = "";
     const session = {
@@ -199,7 +200,7 @@ class App {
       notes: notes,
     };
     element.sessions.push(session);
-    model._moveActivity(id, 0, element);
+    model._moveActivity(id, activitiesLength - 1, element);
     this._storeIDAndRender();
     mainView._closeLogSessionForm();
   }

@@ -8,12 +8,13 @@ class Model {
   // export const deletedActivities = [];
 
   createActivity = function (input) {
-    this.activities.push({
+    this.activities.splice(0, 0, {
       activity: input,
       sessions: [],
       variation: [],
     });
     this.setLocalStorage();
+    console.log(this.activities);
   };
 
   // Storage
@@ -62,10 +63,10 @@ class Model {
   // Adjusting Activities
   _moveActivityUpOrDown = function (e, direction, movingID) {
     // const movingID = +e.target.closest(".activity_item").id.slice(2);
-    if (movingID === model.activities.length - 1 && direction === "up") return;
-    if (movingID === 0 && direction === "down") return;
+    if (movingID === this.activities.length - 1 && direction === "down") return;
+    if (movingID === 0 && direction === "up") return;
 
-    const newID = direction === "up" ? movingID + 1 : movingID - 1;
+    const newID = direction === "up" ? movingID - 1 : movingID + 1;
     const element = this.activities[movingID];
 
     this._moveActivity(movingID, newID, element);
