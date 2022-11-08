@@ -228,6 +228,10 @@ class App {
   init() {
     model.getLocalStorage();
     console.log(model.activities);
+    // console.log(model.activities[10].sessions);
+
+    // const newArr = model.orderByDate(model.activities[10].sessions);
+    // // console.log(model.orderByDate(model.activities[10].sessions));
     mainView._render(model.activities);
   }
 }

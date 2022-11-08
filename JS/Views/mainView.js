@@ -21,16 +21,16 @@ class MainView extends View {
 
   _activityMarkup(activity, id) {
     const variations = this._variationsMarkup(activity);
-    const activityLength = activity.sessions.length;
+    const activitySessionsLength = activity.sessions.length;
     let lastWorkoutDate = "";
-    if (activityLength > 0) {
-      lastWorkoutDate = activity.sessions[activityLength - 1].date;
+    if (activitySessionsLength > 0) {
+      lastWorkoutDate = activity.sessions[activitySessionsLength - 1].date;
     }
 
     return `
     <li class="activity_item" id="id${id}">${activity.activity} ${
-      activityLength > 0
-        ? `<span class="lastWorkout">Last Workout ${lastWorkoutDate}</span>`
+      activitySessionsLength > 0
+        ? `<span class="lastWorkout">${lastWorkoutDate}</span>`
         : ""
     }
         <ol class="sub_category">

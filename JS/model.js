@@ -43,6 +43,14 @@ class Model {
     }
   };
 
+  // orderByDate(array) {
+  //   const newArray = array.sort(function (a, b) {
+  //     return new Date(b.date).getTime() - new Date(a.date).getTime();
+  //   });
+  //   console.log(newArray);
+  //   return newArray;
+  // }
+
   // Set ID's
   setIDs = function (arr) {
     let id = -1;
