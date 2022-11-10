@@ -57,9 +57,15 @@ class MainView extends View {
   _openLogSessionForm(e, activities, IdToEdit) {
     const logSessionForm = document.getElementById("logSessionForm");
     const thisActivity = activities[IdToEdit].activity;
-    logSessionForm.insertAdjacentHTML("afterbegin", `<h3>${thisActivity}<h3>`);
+    // Create Activity heading
+    logSessionForm.insertAdjacentHTML(
+      "afterbegin",
+      `<h3 class="activity_heading_form">${thisActivity}<h3>`
+    );
+    // Make form visible
     logSessionForm.style.display = "block";
     logSessionForm.style.visibility = "visible";
+    // Insert todays date
     document.getElementById("dateOnForm").valueAsDate = new Date();
 
     // Creating dropdown menu of variations
@@ -81,7 +87,13 @@ class MainView extends View {
   }
 
   _closeLogSessionForm(e) {
+    // Hide Form
     document.getElementById("logSessionForm").style.visibility = "hidden";
+    // Remove old activity heading
+    document.querySelector(".activity_heading_form")
+      ? (document.querySelector(".activity_heading_form").innerHTML = "")
+      : "";
+    // Clear Values
     sessionLength.value = "";
     sessionSets.value = "";
     sessionNotes.value = "";
@@ -89,10 +101,3 @@ class MainView extends View {
 }
 
 export default new MainView();
-
-// Buttons that were on the elements but have been replaced with swipes
-// <button class="btn log_session_btn">🔥</button>
-// <button class="btn push_up_btn">↑</button>
-// <button class="btn push_down_btn">↓</button>
-// <button class="btn edit_btn">Edit</button>
-// <button class="btn add_sub_btn">+</button>
