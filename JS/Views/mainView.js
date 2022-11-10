@@ -55,8 +55,11 @@ class MainView extends View {
   }
 
   _openLogSessionForm(e, activities, IdToEdit) {
-    document.getElementById("logSessionForm").style.display = "block";
-    document.getElementById("logSessionForm").style.visibility = "visible";
+    const logSessionForm = document.getElementById("logSessionForm");
+    // const thisActivity = activities[IdToEdit].activity;
+    // logSessionForm.insertAdjacentHTML("beforebegin", `<h3>${thisActivity}<h3>`);
+    logSessionForm.style.display = "block";
+    logSessionForm.style.visibility = "visible";
     document.getElementById("dateOnForm").valueAsDate = new Date();
 
     // Creating dropdown menu of variations

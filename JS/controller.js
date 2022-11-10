@@ -19,7 +19,6 @@ const sessionDate = document.querySelector(".date_form_input");
 const sessionLength = document.querySelector(".length_form_input");
 const sessionSets = document.querySelector(".sets_form_input");
 const sessionNotes = document.querySelector(".notes_form_input");
-const addSubBtn = document.querySelector(".add_sub_btn");
 // const workoutViewBtn = document.querySelector(".workout_view_btn");
 
 let IdToEdit;
@@ -55,7 +54,7 @@ class App {
         this._storeIDAndRender();
       }
       if (this.swipeDirection === "right") {
-        this._addSubItem(e);
+        this._addVariation(e);
       }
       if (this.swipeDirection === "up") {
         console.log("You swiped up");
@@ -70,17 +69,19 @@ class App {
     // activitiesDisplay.addEventListener("dblclick", (e) => {
     //   this._setIdToEdit(e)
     //   console.log("doubleclick");
-    //   this._addSubItem(e);
+    //   this._addVariation(e);
     // });
 
     activitiesDisplay.addEventListener("click", (e) => {
       e.preventDefault();
       // Guard clauses to stop logSession Form if variation text box exists or button is pressed
+      console.log(e.target);
       if (
-        document.querySelector(".add_sub_act_input") ||
-        e.target.classList.contains("add_sub_act_btn")
+        e.target.classList.contains("add_variation_input") ||
+        e.target.classList.contains("add_variation_btn")
       )
         return;
+      this._removeVariationInputBox();
 
       mainView._openLogSessionForm(e, model.activities, IdToEdit);
 
@@ -97,7 +98,7 @@ class App {
       //   this._openLogSessionForm(e);
       // }
       // if (e.target.closest(".add_sub_btn")) {
-      //   this._addSubItem(e);
+      //   this._addVariation(e);
       // }
     });
 
@@ -142,44 +143,51 @@ class App {
     this._storeIDAndRender();
   }
 
-  _addSubItem(e) {
-    // Guard clause to check for any other text boxes
-    if (document.querySelector(".add_sub_act_input")) {
-      const existingVariationInputBox =
-        document.querySelector(".add_sub_act_input");
+  _removeVariationInputBox() {
+    if (document.querySelector(".add_variation_input")) {
+      const existingVariationInputBox = document.querySelector(
+        ".add_variation_input"
+      );
       existingVariationInputBox.parentElement.innerHTML = "";
     }
+  }
 
-    const subCat = document.getElementById(`id${IdToEdit}`).lastElementChild;
+  _addVariation(e) {
+    // Guard clause to check for any other text boxes
+    this._removeVariationInputBox();
 
-    subCat.insertAdjacentHTML(
+    const variationBlock = document.getElementById(
+      `id${IdToEdit}`
+    ).lastElementChild;
+
+    variationBlock.insertAdjacentHTML(
       "afterbegin",
-      `<div class="add_sub_input_container">
+      `<div class="add_variation_input_container">
       <input
           type="text"
-          class="add_sub_act_input"
-          placeholder="add a sub activity"
+          class="add_variation_input"
+          placeholder="add a variation"
         />
-        <button class="btn add_sub_act_btn">Add</button>
+        <button class="btn add_variation_btn">Add</button>
           </div>`
     );
 
-    const subActAddBtn = document.querySelector(".add_sub_act_btn");
-    subActAddBtn.addEventListener("click", (e) => {
+    const addVariationBtn = document.querySelector(".add_variation_btn");
+    addVariationBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      this._processAddSub(e, IdToEdit);
+      this._processAddVariation(e, IdToEdit);
     });
   }
 
-  _processAddSub(e, itemID) {
-    const addSubInput = document.querySelector(".add_sub_act_input");
-    const addSubInputContainer = document.querySelector(
-      ".add_sub_input_container"
+  _processAddVariation(e, itemID) {
+    const addVariationInput = document.querySelector(".add_variation_input");
+    const addVariationInputContainer = document.querySelector(
+      ".add_variation_input_container"
     );
-    const input = addSubInput.value;
+    const input = addVariationInput.value;
     if (input === "") return;
     model.activities[itemID].variation.push({ type: input });
-    addSubInputContainer.innerHTML = "";
+    addVariationInputContainer.innerHTML = "";
     this._storeIDAndRender();
   }
 
