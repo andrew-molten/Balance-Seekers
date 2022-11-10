@@ -56,8 +56,8 @@ class MainView extends View {
 
   _openLogSessionForm(e, activities, IdToEdit) {
     const logSessionForm = document.getElementById("logSessionForm");
-    // const thisActivity = activities[IdToEdit].activity;
-    // logSessionForm.insertAdjacentHTML("beforebegin", `<h3>${thisActivity}<h3>`);
+    const thisActivity = activities[IdToEdit].activity;
+    logSessionForm.insertAdjacentHTML("afterbegin", `<h3>${thisActivity}<h3>`);
     logSessionForm.style.display = "block";
     logSessionForm.style.visibility = "visible";
     document.getElementById("dateOnForm").valueAsDate = new Date();

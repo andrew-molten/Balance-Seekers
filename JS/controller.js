@@ -75,7 +75,6 @@ class App {
     activitiesDisplay.addEventListener("click", (e) => {
       e.preventDefault();
       // Guard clauses to stop logSession Form if variation text box exists or button is pressed
-      console.log(e.target);
       if (
         e.target.classList.contains("add_variation_input") ||
         e.target.classList.contains("add_variation_btn")
@@ -141,6 +140,7 @@ class App {
     model.deletedActivities.push(element);
     model.activities.splice(deleteID, 1);
     this._storeIDAndRender();
+    mainView._closeLogSessionForm();
   }
 
   _removeVariationInputBox() {
@@ -167,12 +167,15 @@ class App {
           type="text"
           class="add_variation_input"
           placeholder="add a variation"
+          onkeydown = "if (event.keyCode == 13)
+                        document.querySelector('.add_variation_btn').click()"
         />
         <button class="btn add_variation_btn">Add</button>
           </div>`
     );
 
     const addVariationBtn = document.querySelector(".add_variation_btn");
+
     addVariationBtn.addEventListener("click", (e) => {
       e.preventDefault();
       this._processAddVariation(e, IdToEdit);
