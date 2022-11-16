@@ -2,7 +2,7 @@ import model from "./model.js";
 import mainView from "./views/mainView.js";
 import config from "./config.js";
 
-import workoutView from "./views/workoutView.js";
+import activityView from "./views/activityView.js";
 // Issue that I was having is that making the class is fine but then you still need to call the class into being i.e - const view = new View(), which can then be exported and called at the same time or called after importing.
 
 const activityInput = document.querySelector(".add__activity__input");
@@ -10,6 +10,7 @@ const addButton = document.querySelector(".add__btn");
 const addActivity = document.querySelector("add__activity");
 const clearButton = document.querySelector(".clear_btn");
 const activitiesDisplay = document.querySelector(".activities_display");
+const activitiesDisp = document.querySelector(".activities");
 const upButton = document.querySelector(".push_up_btn");
 const downButton = document.querySelector(".push_down_btn");
 const closeForm = document.querySelector(".close_session_form");
@@ -19,9 +20,8 @@ const sessionDate = document.querySelector(".date_form_input");
 const sessionLength = document.querySelector(".length_form_input");
 const sessionSets = document.querySelector(".sets_form_input");
 const sessionNotes = document.querySelector(".notes_form_input");
-// const workoutViewBtn = document.querySelector(".workout_view_btn");
 
-let IdToEdit;
+let idToEdit;
 
 class App {
   touchstartX = 0;
@@ -35,6 +35,7 @@ class App {
     this.init();
     // Event Handlers
     addButton.addEventListener("click", this._processActivity.bind(this));
+
     // workoutViewBtn.addEventListener("click", (e) => {
     //   e.preventDefault();
     //   workoutView._render(model.activities);
@@ -50,7 +51,7 @@ class App {
       this.touchendY = e.changedTouches[0].screenY;
       this.handleswipe();
       if (this.swipeDirection === "left") {
-        model._moveActivityUpOrDown(e, "down", IdToEdit);
+        model._moveActivityUpOrDown(e, "down", idToEdit);
         this._storeIDAndRender();
       }
       if (this.swipeDirection === "right") {
@@ -80,9 +81,10 @@ class App {
         e.target.classList.contains("add_variation_btn")
       )
         return;
-      this._removeVariationInputBox();
 
-      mainView._openLogSessionForm(e, model.activities, IdToEdit);
+      this._removeVariationInputBox();
+      (window.location.href = "activityView.html"), true;
+      // activityView._openActivityView(e, model.activities, idToEdit);
 
       // if (e.target.closest(".push_up_btn")) {
       //   model._moveActivityUpOrDown(e, "up");
@@ -94,21 +96,21 @@ class App {
       //   this._deleteActivity(e);
       // }
       // if (e.target.closest(".log_session_btn")) {
-      //   this._openLogSessionForm(e);
+      //   activityView._openActivityView(e);
       // }
       // if (e.target.closest(".add_sub_btn")) {
       //   this._addVariation(e);
       // }
     });
 
-    closeForm.addEventListener("click", mainView._closeLogSessionForm());
-    submitFormBtn.addEventListener("click", (e) => this._submitForm(e));
-    deleteActivityBtn.addEventListener("click", (e) => this._deleteActivity(e));
+    // closeForm.addEventListener("click", mainView._closeLogSessionForm());
+    // submitFormBtn.addEventListener("click", (e) => this._submitForm(e));
+    // deleteActivityBtn.addEventListener("click", (e) => this._deleteActivity(e));
   }
 
   //controller.js:106 Uncaught TypeError: Cannot read properties of null (reading 'id')
   _setIdToEdit(e) {
-    IdToEdit = +e.target.closest(".activity_item").id.slice(2);
+    idToEdit = +e.target.closest(".activity_item").id.slice(2);
   }
 
   // switchToWorkoutView() {
@@ -135,7 +137,7 @@ class App {
 
   _deleteActivity(e) {
     e.preventDefault();
-    const deleteID = IdToEdit;
+    const deleteID = idToEdit;
     const element = model.activities[deleteID];
     model.deletedActivities.push(element);
     model.activities.splice(deleteID, 1);
@@ -157,7 +159,7 @@ class App {
     this._removeVariationInputBox();
 
     const variationBlock = document.getElementById(
-      `id${IdToEdit}`
+      `id${idToEdit}`
     ).lastElementChild;
 
     variationBlock.insertAdjacentHTML(
@@ -178,7 +180,7 @@ class App {
 
     addVariationBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      this._processAddVariation(e, IdToEdit);
+      this._processAddVariation(e, idToEdit);
     });
   }
 
@@ -200,7 +202,7 @@ class App {
     const length = sessionLength.value;
     const sets = sessionSets.value;
     const notes = sessionNotes.value;
-    const id = IdToEdit;
+    const id = idToEdit;
     const element = model.activities[id];
     const activitiesLength = model.activities.length;
     sessionDate.value = "";

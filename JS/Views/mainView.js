@@ -10,12 +10,14 @@ const sessionNotes = document.querySelector(".notes_form_input");
 class MainView extends View {
   _generateMarkup() {
     let markup = "";
+    // let markup = `<ol class="activities_display">`;
 
     // Create markup for each activity and add it to markup string
     this._activities.forEach((activity) => {
       const individualMarkup = this._activityMarkup(activity, activity.id);
       markup = markup + individualMarkup;
     });
+    // markup = markup + "</ol>";
     return markup;
   }
 
@@ -54,49 +56,8 @@ class MainView extends View {
     return variationsMarkup;
   }
 
-  _openLogSessionForm(e, activities, IdToEdit) {
-    const logSessionForm = document.getElementById("logSessionForm");
-    const thisActivity = activities[IdToEdit].activity;
-    // Create Activity heading
-    logSessionForm.insertAdjacentHTML(
-      "afterbegin",
-      `<h3 class="activity_heading_form">${thisActivity}<h3>`
-    );
-    // Make form visible
-    logSessionForm.style.display = "block";
-    logSessionForm.style.visibility = "visible";
-    // Insert todays date
-    document.getElementById("dateOnForm").valueAsDate = new Date();
-
-    // Creating dropdown menu of variations
-    if (activities[IdToEdit].variation.length === 0) {
-      variationSelectDiv.innerHTML = "";
-    } else {
-      let variations = "";
-
-      activities[IdToEdit].variation
-        ? activities[IdToEdit].variation.forEach(
-            (element) =>
-              (variations =
-                variations +
-                `<option value="${element.type}">${element.type}</option>`)
-          )
-        : "";
-      variationSelect.insertAdjacentHTML("afterbegin", variations);
-    }
-  }
-
-  _closeLogSessionForm(e) {
-    // Hide Form
-    document.getElementById("logSessionForm").style.visibility = "hidden";
-    // Remove old activity heading
-    document.querySelector(".activity_heading_form")
-      ? (document.querySelector(".activity_heading_form").innerHTML = "")
-      : "";
-    // Clear Values
-    sessionLength.value = "";
-    sessionSets.value = "";
-    sessionNotes.value = "";
+  _insertMarkup(markup) {
+    this._parentElement.insertAdjacentHTML("afterbegin", markup);
   }
 }
 
