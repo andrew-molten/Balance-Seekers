@@ -1,69 +1,34 @@
 import View from "./view.js";
 
+const logSessionForm = document.getElementById("logSessionForm");
+const variationSelectDiv = document.getElementById("variationSelectDiv");
+const variationSelect = document.getElementById("variationSelect");
+const sessionDate = document.querySelector(".date_form_input");
+const sessionLength = document.querySelector(".length_form_input");
+const sessionSets = document.querySelector(".sets_form_input");
+const sessionNotes = document.querySelector(".notes_form_input");
+const activityHeading = document.querySelector(".activity_heading_form");
+const addActivityBox = document.querySelector(".add__activity");
+
 class ActivityView extends View {
   _generateMarkup() {
-    const markup = `
-    <h3 class="activity_heading_form">${
-      this._activities[this._idToEdit].activity
-    }</h3>
-    
-    <h4>Date</h4>
-    <input
-      type="date"
-      class="date_form_input"
-      id="dateOnForm"
-    />
-    <h4>Session length</h4>
-    <input
-      type="number"
-      class="length_form_input"
-      placeholder=""
-    />
-    <h4>Sets</h4>
-    <input
-      type="number"
-      class="sets_form_input"
-      placeholder=""
-    />
-    <h4>Notes</h4>
-    <input
-      type="text"
-      class="notes_form_input"
-      placeholder=""
-    />
-    <div id="variationSelectDiv">
-    <h4>Variation</h4>
-    <select name="variationSelect" id="variationSelect">
-    
-    </select>
-    </div>
-
-
-
-    <button class="btn submit_log_btn"
-      <span>Submit</span>
-    </button>
-    <button class="btn close_activity_view_btn"
-      <span>Close</span>
-    </button>
-    <button class="btn delete_activity_btn">Delete activity</button>
-  </form>
-</div>`;
+    const markup = this._activities[this._idToEdit].activity;
     return markup;
   }
 
   _insertMarkup(markup) {
-    this._parentElement.parentElement.insertAdjacentHTML("afterbegin", markup);
+    activityHeading.insertAdjacentHTML("afterbegin", markup);
   }
 
   _openActivityView(e, activities, idToEdit) {
+    logSessionForm.style.display = "block";
+    addActivityBox.style.display = "none";
     this._render(activities, idToEdit);
-    const variationSelect = document.getElementById("variationSelect");
-    const variationSelectDiv = document.getElementById("variationSelectDiv");
-    const closeBtn = document.querySelector(".close_activity_view_btn");
 
     // Insert todays date
     document.getElementById("dateOnForm").valueAsDate = new Date();
+
+    sessionLength.focus();
 
     // Creating dropdown menu of variations
     if (activities[idToEdit].variation.length === 0) {
@@ -81,12 +46,15 @@ class ActivityView extends View {
         : "";
 
       variationSelect.insertAdjacentHTML("afterbegin", variations);
-      closeBtn.addEventListener("click", (e) => console.log("closing"));
     }
   }
 
   _closeLogSessionForm(e) {
+    logSessionForm.style.display = "none";
+    addActivityBox.style.display = "block";
     // Clear Values
+    activityHeading.innerHTML = "";
+    sessionDate.value = "";
     sessionLength.value = "";
     sessionSets.value = "";
     sessionNotes.value = "";

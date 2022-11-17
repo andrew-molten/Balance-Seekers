@@ -47,11 +47,15 @@ ol li {
 }
 .log_session_form {
   display: none;
-  position: fixed;
-  left: 20%;
-  top: 10%;
-  border: 3px solid #999;
+  // position: fixed;
+  // left: 20%;
+  // top: 10%;
+  // border: 3px solid #999;
   background-color: white;
+}
+
+.notes_form_input {
+  height: 2rem;
 }
 
 #variationSelect {

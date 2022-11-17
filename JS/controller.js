@@ -83,8 +83,7 @@ class App {
         return;
 
       this._removeVariationInputBox();
-      (window.location.href = "activityView.html"), true;
-      // activityView._openActivityView(e, model.activities, idToEdit);
+      activityView._openActivityView(e, model.activities, idToEdit);
 
       // if (e.target.closest(".push_up_btn")) {
       //   model._moveActivityUpOrDown(e, "up");
@@ -103,9 +102,9 @@ class App {
       // }
     });
 
-    // closeForm.addEventListener("click", mainView._closeLogSessionForm());
-    // submitFormBtn.addEventListener("click", (e) => this._submitForm(e));
-    // deleteActivityBtn.addEventListener("click", (e) => this._deleteActivity(e));
+    closeForm.addEventListener("click", activityView._closeLogSessionForm());
+    submitFormBtn.addEventListener("click", (e) => this._submitForm(e));
+    deleteActivityBtn.addEventListener("click", (e) => this._deleteActivity(e));
   }
 
   //controller.js:106 Uncaught TypeError: Cannot read properties of null (reading 'id')
@@ -137,12 +136,11 @@ class App {
 
   _deleteActivity(e) {
     e.preventDefault();
-    const deleteID = idToEdit;
-    const element = model.activities[deleteID];
+    const element = model.activities[idToEdit];
     model.deletedActivities.push(element);
-    model.activities.splice(deleteID, 1);
+    model.activities.splice(idToEdit, 1);
+    activityView._closeLogSessionForm();
     this._storeIDAndRender();
-    mainView._closeLogSessionForm();
   }
 
   _removeVariationInputBox() {
@@ -215,8 +213,8 @@ class App {
     };
     element.sessions.push(session);
     model._moveActivity(id, activitiesLength - 1, element);
+    activityView._closeLogSessionForm();
     this._storeIDAndRender();
-    mainView._closeLogSessionForm();
   }
 
   handleswipe() {
@@ -227,13 +225,13 @@ class App {
       return (this.swipeDirection = "");
 
     if (Math.abs(diffX) > Math.abs(diffY)) {
-      // Sliding horizontally
+      // Swiping horizontally
       if (diffX > 0) return (this.swipeDirection = "left");
       if (diffX < 0) return (this.swipeDirection = "right");
     }
 
     if (Math.abs(diffY) > Math.abs(diffX)) {
-      // Sliding vertically
+      // Swiping vertically
       if (diffY < 0) return (this.swipeDirection = "down");
       if (diffY > 0) return (this.swipeDirection = "up");
     }
@@ -241,7 +239,6 @@ class App {
   init() {
     model.getLocalStorage();
     console.log(model.activities);
-    // console.log(model.activities[10].sessions);
 
     // const newArr = model.orderByDate(model.activities[10].sessions);
     // // console.log(model.orderByDate(model.activities[10].sessions));

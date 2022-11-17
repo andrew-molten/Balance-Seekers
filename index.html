@@ -33,10 +33,13 @@
           class="add__activity__input"
           placeholder="Add an activity here.."
         />
-        <button class="btn add__btn">
+        <button class="btn add__btn" >
           <span>Add</span>
         </button>
-        <!-- <button class="btn workout_view_btn">
+
+        <!-- <a href='activityView.html'>Activity View</a> -->
+
+        <!-- <button class="btn workout_view_btn" >
           <span>Workout View</span>
         </button> -->
       </form>
@@ -87,15 +90,46 @@
         </div> -->
 
 
-<!-- 
+        <form class="log_session_form" id="logSessionForm">
+          <h3 class="activity_heading_form"></h3>
+          <h4>Date</h4>
+    <input
+      type="date"
+      class="date_form_input"
+      id="dateOnForm"
+    />
+    <h4>Session length (mins)</h4>
+    <input
+      type="number"
+      class="length_form_input"
+      placeholder=""
+    />
+    <h4>Sets</h4>
+    <input
+      type="number"
+      class="sets_form_input"
+      placeholder=""
+    />
+    <h4>Notes</h4>
+    <input
+      type="text"
+      class="notes_form_input"
+      placeholder=""
+    />
+    <div id="variationSelectDiv">
+    <h4>Variation</h4>
+    <select name="variationSelect" id="variationSelect">
+    
+    </select>
+    </div>
         <button class="btn submit_session_form"
           <span>Submit</span>
         </button>
         <button class="btn close_session_form"
           <span>Close</span>
         </button>
-        <button class="btn delete_activity_btn">Delete activity</button> -->
-      <!-- </form> -->
+        <button class="btn delete_activity_btn">Delete activity</button>
+      </form>
     </div>
   </body>
 </html>

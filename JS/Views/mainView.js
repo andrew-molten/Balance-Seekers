@@ -1,12 +1,5 @@
 import View from "./view.js";
 
-const variationSelectDiv = document.getElementById("variationSelectDiv");
-const variationSelect = document.getElementById("variationSelect");
-const sessionDate = document.querySelector(".date_form_input");
-const sessionLength = document.querySelector(".length_form_input");
-const sessionSets = document.querySelector(".sets_form_input");
-const sessionNotes = document.querySelector(".notes_form_input");
-
 class MainView extends View {
   _generateMarkup() {
     let markup = "";
