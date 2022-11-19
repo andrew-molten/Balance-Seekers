@@ -3,16 +3,13 @@ import mainView from "./views/mainView.js";
 import config from "./config.js";
 
 import activityView from "./views/activityView.js";
+import View from "./views/view.js";
 // Issue that I was having is that making the class is fine but then you still need to call the class into being i.e - const view = new View(), which can then be exported and called at the same time or called after importing.
 
 const activityInput = document.querySelector(".add__activity__input");
 const addButton = document.querySelector(".add__btn");
 const addActivity = document.querySelector("add__activity");
-const clearButton = document.querySelector(".clear_btn");
 const activitiesDisplay = document.querySelector(".activities_display");
-const activitiesDisp = document.querySelector(".activities");
-const upButton = document.querySelector(".push_up_btn");
-const downButton = document.querySelector(".push_down_btn");
 const closeForm = document.querySelector(".close_session_form");
 const submitFormBtn = document.querySelector(".submit_session_form");
 const deleteActivityBtn = document.querySelector(".delete_activity_btn");
@@ -20,6 +17,15 @@ const sessionDate = document.querySelector(".date_form_input");
 const sessionLength = document.querySelector(".length_form_input");
 const sessionSets = document.querySelector(".sets_form_input");
 const sessionNotes = document.querySelector(".notes_form_input");
+const createCategoryBtn = document.getElementById("createCategoryBtn");
+const createCategoryBtn2 = document.getElementById("createCategoryBtn2");
+const categoryDropdownDiv = document.getElementById(
+  "categorySelectMainViewDiv"
+);
+const categoryDropdown = document.getElementById("categorySelectMainView");
+const categoryInputDiv = document.getElementById("addCategoryInputDiv");
+const submitCategoryBtn = document.getElementById("submitCategoryBtn");
+const categoryInput = document.getElementById("categoryInput");
 
 let idToEdit;
 
@@ -35,11 +41,15 @@ class App {
     this.init();
     // Event Handlers
     addButton.addEventListener("click", this._processActivity.bind(this));
-
-    // workoutViewBtn.addEventListener("click", (e) => {
-    //   e.preventDefault();
-    //   workoutView._render(model.activities);
-    // });
+    createCategoryBtn.addEventListener(
+      "click",
+      mainView._displayCategoryInputBox
+    );
+    createCategoryBtn2.addEventListener(
+      "click",
+      mainView._displayCategoryInputBox
+    );
+    submitCategoryBtn.addEventListener("click", this._processCategoryAdd);
 
     activitiesDisplay.addEventListener("touchstart", (e) => {
       this._setIdToEdit(e);
@@ -107,6 +117,14 @@ class App {
     deleteActivityBtn.addEventListener("click", (e) => this._deleteActivity(e));
   }
 
+  _checkIfCategoryExists() {
+    if (!model.categories) return;
+    if (model.categories.length > 0) {
+      mainView._displayCategoryDropMenu();
+      mainView._renderCategoryDropMenu(model.categories);
+    }
+  }
+
   //controller.js:106 Uncaught TypeError: Cannot read properties of null (reading 'id')
   _setIdToEdit(e) {
     idToEdit = +e.target.closest(".activity_item").id.slice(2);
@@ -126,6 +144,17 @@ class App {
     mainView._clearInputField();
     model.createActivity(activity);
     this._storeIDAndRender();
+  }
+
+  _processCategoryAdd(e) {
+    e.preventDefault();
+    if (!categoryInput.value) return;
+
+    const input = categoryInput.value;
+
+    model.addCategory(input);
+    mainView._hideCategoryInputDiv();
+    mainView._renderCategoryDropMenu(model.categories);
   }
 
   _storeIDAndRender() {
@@ -238,7 +267,9 @@ class App {
   }
   init() {
     model.getLocalStorage();
+    this._checkIfCategoryExists();
     console.log(model.activities);
+    console.log(model.categories);
 
     // const newArr = model.orderByDate(model.activities[10].sessions);
     // // console.log(model.orderByDate(model.activities[10].sessions));

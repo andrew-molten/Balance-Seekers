@@ -37,11 +37,37 @@
           <span>Add</span>
         </button>
 
+        <button class="btn" id="createCategoryBtn" >
+          <span>Create a category</span>
+        </button>
+
+        <div id="categorySelectMainViewDiv">
+          <select name="categorySelectMainView" id="categorySelectMainView">
+          </select>
+          <button class="btn" id="createCategoryBtn2" >
+            <span>+</span>
+          </button>
+       </div>
+
+        <div id="addCategoryInputDiv">
+        <input
+          type="text"
+          autocomplete="off"
+          class="create_category_input"
+          id="categoryInput"
+          placeholder="Exercise..?"
+        />
+        <button class="btn" id="submitCategoryBtn">
+          <span>Create</span>
+        </button>
+      </div>
+
+  
+
+
         <!-- <a href='activityView.html'>Activity View</a> -->
 
-        <!-- <button class="btn workout_view_btn" >
-          <span>Workout View</span>
-        </button> -->
+        
       </form>
     </div>
 
@@ -56,19 +82,25 @@
       </ol>
     </div>
 
-    <!-- <div class="log_session">
+
       <form class="log_session_form" id="logSessionForm">
+        <h3 class="activity_heading_form"></h3>
+        <div id="categorySelectActivityViewDiv">
+            <select name="categorySelectActivityView" id="categorySelectActivityView">
+            </select>
+         </div>
+
         <h4>Date</h4>
         <input
-          type="date"
-          class="date_form_input"
-          id="dateOnForm"
+        type="date"
+        class="date_form_input"
+        id="dateOnForm"
         />
-        <h4>Session length</h4>
+        <h4>Session length (mins)</h4>
         <input
-          type="number"
-          class="length_form_input"
-          placeholder=""
+        type="number"
+        class="length_form_input"
+        placeholder=""
         />
         <h4>Sets</h4>
         <input
@@ -85,50 +117,15 @@
         <div id="variationSelectDiv">
         <h4>Variation</h4>
         <select name="variationSelect" id="variationSelect">
-        
         </select>
-        </div> -->
-
-
-        <form class="log_session_form" id="logSessionForm">
-          <h3 class="activity_heading_form"></h3>
-          <h4>Date</h4>
-    <input
-      type="date"
-      class="date_form_input"
-      id="dateOnForm"
-    />
-    <h4>Session length (mins)</h4>
-    <input
-      type="number"
-      class="length_form_input"
-      placeholder=""
-    />
-    <h4>Sets</h4>
-    <input
-      type="number"
-      class="sets_form_input"
-      placeholder=""
-    />
-    <h4>Notes</h4>
-    <input
-      type="text"
-      class="notes_form_input"
-      placeholder=""
-    />
-    <div id="variationSelectDiv">
-    <h4>Variation</h4>
-    <select name="variationSelect" id="variationSelect">
-    
-    </select>
-    </div>
-        <button class="btn submit_session_form"
-          <span>Submit</span>
-        </button>
-        <button class="btn close_session_form"
-          <span>Close</span>
-        </button>
-        <button class="btn delete_activity_btn">Delete activity</button>
+        </div>
+            <button class="btn submit_session_form"
+              <span>Submit</span>
+            </button>
+            <button class="btn close_session_form"
+              <span>Close</span>
+            </button>
+            <button class="btn delete_activity_btn">Delete activity</button>
       </form>
     </div>
   </body>

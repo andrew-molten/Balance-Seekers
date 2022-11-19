@@ -9,6 +9,7 @@ const sessionSets = document.querySelector(".sets_form_input");
 const sessionNotes = document.querySelector(".notes_form_input");
 const activityHeading = document.querySelector(".activity_heading_form");
 const addActivityBox = document.querySelector(".add__activity");
+const categoryDropdown = document.getElementById("categorySelectMainView");
 
 class ActivityView extends View {
   _generateMarkup() {
@@ -31,20 +32,17 @@ class ActivityView extends View {
     sessionLength.focus();
 
     // Creating dropdown menu of variations
+    this._variationMenuGenerator(activities, idToEdit);
+  }
+
+  _variationMenuGenerator(activities, idToEdit) {
     if (activities[idToEdit].variation.length === 0) {
       variationSelectDiv.innerHTML = "";
     } else {
-      let variations = "";
-
-      activities[idToEdit].variation
-        ? activities[idToEdit].variation.forEach(
-            (element) =>
-              (variations =
-                variations +
-                `<option value="${element.type}">${element.type}</option>`)
-          )
-        : "";
-
+      const variations = this._fillDropMenu(
+        activities[idToEdit].variation,
+        "element.type"
+      );
       variationSelect.insertAdjacentHTML("afterbegin", variations);
     }
   }

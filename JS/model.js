@@ -4,6 +4,7 @@ class Model {
   state = {
     activities: [],
     deletedActivities: [],
+    categories: [],
   };
 
   // export const activities = [];
@@ -16,12 +17,19 @@ class Model {
       variation: [],
     });
     this.setLocalStorage();
+  };
+
+  addCategory = function (input) {
+    this.categories.push(input);
+    this.setLocalStorage();
     console.log(this.activities);
+    console.log(this.categories);
   };
 
   // Storage
   setLocalStorage = function () {
     localStorage.setItem("activities", JSON.stringify(this.activities));
+    localStorage.setItem("categories", JSON.stringify(this.categories));
     localStorage.setItem(
       "deletedActivities",
       JSON.stringify(this.deletedActivities)
@@ -30,6 +38,8 @@ class Model {
   getLocalStorage = function () {
     const data = JSON.parse(localStorage.getItem("activities"));
     const deletedData = JSON.parse(localStorage.getItem("deletedActivities"));
+    const categories = JSON.parse(localStorage.getItem("categories"));
+
     if (!data) {
       this.activities = [];
     } else {
@@ -40,6 +50,12 @@ class Model {
       this.deletedActivities = [];
     } else {
       this.deletedActivities = deletedData;
+    }
+
+    if (!categories) {
+      this.categories = [];
+    } else {
+      this.categories = categories;
     }
   };
 
