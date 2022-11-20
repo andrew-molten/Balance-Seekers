@@ -7,14 +7,14 @@ class MainView extends View {
 
     // Create markup for each activity and add it to markup string
     this._activities.forEach((activity) => {
-      const individualMarkup = this._activityMarkup(activity, activity.id);
+      const individualMarkup = this._activityMarkup(activity, activity.sortId);
       markup = markup + individualMarkup;
     });
     // markup = markup + "</ol>";
     return markup;
   }
 
-  _activityMarkup(activity, id) {
+  _activityMarkup(activity, sortId) {
     const variations = this._variationsMarkup(activity);
     const activitySessionsLength = activity.sessions.length;
     let lastWorkoutDate = "";
@@ -23,7 +23,7 @@ class MainView extends View {
     }
 
     return `
-    <li class="activity_item" id="id${id}">${activity.activity} ${
+    <li class="activity_item" id="sortId${sortId}">${activity.activity} ${
       activitySessionsLength > 0
         ? `<span class="lastWorkout">${lastWorkoutDate}</span>`
         : ""

@@ -36,13 +36,13 @@ export default class View {
 
   _fillDropMenu(array, object) {
     let options = "";
+    const type = "element.type";
 
     array
-      ? array.forEach(
-          (element) =>
-            (options =
-              options + `<option value="${element}">${element}</option>`)
-        )
+      ? array.forEach((element) => {
+          const currentOption = `<option value="${type}">${type}</option>`;
+          options = options + currentOption;
+        })
       : "";
     return options;
   }

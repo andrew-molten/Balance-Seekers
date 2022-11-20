@@ -39,6 +39,7 @@ class ActivityView extends View {
     if (activities[idToEdit].variation.length === 0) {
       variationSelectDiv.innerHTML = "";
     } else {
+      console.log(activities[idToEdit].variation);
       const variations = this._fillDropMenu(
         activities[idToEdit].variation,
         "element.type"

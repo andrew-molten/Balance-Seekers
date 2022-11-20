@@ -20,7 +20,7 @@ class Model {
   };
 
   addCategory = function (input) {
-    this.categories.push(input);
+    this.categories.push({ category: input, activities: [] });
     this.setLocalStorage();
     console.log(this.activities);
     console.log(this.categories);
@@ -57,31 +57,40 @@ class Model {
     } else {
       this.categories = categories;
     }
-  };
 
-  // orderByDate(array) {
-  //   const newArray = array.sort(function (a, b) {
-  //     return new Date(b.date).getTime() - new Date(a.date).getTime();
-  //   });
-  //   console.log(newArray);
-  //   return newArray;
-  // }
+    // Trying to fix the ID and sortID properties so that both can exist
+    // Keep the Below code in until 1/1/2023 - to fix everyones current date - then remove it
+    let sortId = -1;
+
+    this.activities.forEach((el) => {
+      sortId = sortId + 1;
+      el.sortId = sortId;
+      delete el.id;
+      if (el.variation.length === 0) return;
+      let variationSortId = -1;
+      // Set sortID for any variations
+      el.variation.forEach((va) => {
+        variationSortId = variationSortId + 1;
+        va.sortId = variationSortId;
+        delete va.id;
+      });
+    });
+  };
 
   // Set ID's
   setIDs = function (arr) {
-    let id = -1;
+    let sortId = -1;
 
     arr.forEach((el) => {
-      let variationIdDecimal = -1;
-      id = id + 1;
-      el.id = id;
+      sortId = sortId + 1;
+      el.sortId = sortId;
       if (el.variation.length === 0) return;
 
+      let variationSortId = -1;
       // Set ID for any variations
       el.variation.forEach((va) => {
-        variationIdDecimal = variationIdDecimal + 1;
-        const variationID = id + "." + variationIdDecimal;
-        va.id = +variationID;
+        variationSortId = variationSortId + 1;
+        va.sortId = variationSortId;
       });
     });
   };
@@ -107,4 +116,5 @@ class Model {
     localStorage.removeItem("activities");
   };
 }
+
 export default new Model();

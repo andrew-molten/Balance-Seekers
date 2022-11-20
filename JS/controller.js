@@ -127,7 +127,8 @@ class App {
 
   //controller.js:106 Uncaught TypeError: Cannot read properties of null (reading 'id')
   _setIdToEdit(e) {
-    idToEdit = +e.target.closest(".activity_item").id.slice(2);
+    console.log(e.target.closest(".activity_item"));
+    idToEdit = +e.target.closest(".activity_item").id.slice(6);
   }
 
   // switchToWorkoutView() {
