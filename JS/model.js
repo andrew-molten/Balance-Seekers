@@ -104,12 +104,12 @@ class Model {
     const newID = direction === "up" ? movingID - 1 : movingID + 1;
     const element = this.activities[movingID];
 
-    this._moveActivity(movingID, newID, element);
+    this._moveActivity(this.activities, movingID, newID, element);
   };
 
-  _moveActivity = function (oldID, newID, element) {
-    this.activities.splice(oldID, 1);
-    this.activities.splice(newID, 0, element);
+  _moveActivity = function (array, oldID, newID, element) {
+    array.splice(oldID, 1);
+    array.splice(newID, 0, element);
   };
 
   reset = function () {

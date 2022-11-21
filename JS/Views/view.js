@@ -34,13 +34,12 @@ export default class View {
     categoryDropdown.insertAdjacentHTML("afterbegin", categories);
   }
 
-  _fillDropMenu(array, object) {
+  _fillDropMenu(array) {
     let options = "";
-    const type = "element.type";
 
     array
       ? array.forEach((element) => {
-          const currentOption = `<option value="${type}">${type}</option>`;
+          const currentOption = `<option value="${element}">${element}</option>`;
           options = options + currentOption;
         })
       : "";

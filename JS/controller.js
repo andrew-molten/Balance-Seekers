@@ -22,6 +22,7 @@ const createCategoryBtn2 = document.getElementById("createCategoryBtn2");
 const categoryDropdownDiv = document.getElementById(
   "categorySelectMainViewDiv"
 );
+const variationSelect = document.getElementById("variationSelect");
 const categoryDropdown = document.getElementById("categorySelectMainView");
 const categoryInputDiv = document.getElementById("addCategoryInputDiv");
 const submitCategoryBtn = document.getElementById("submitCategoryBtn");
@@ -233,6 +234,7 @@ class App {
     const id = idToEdit;
     const element = model.activities[id];
     const activitiesLength = model.activities.length;
+    const currentVariation = variationSelect.value;
     sessionDate.value = "";
     sessionLength.value = "";
     const session = {
@@ -240,9 +242,10 @@ class App {
       length: length,
       sets: sets,
       notes: notes,
+      variation: currentVariation,
     };
     element.sessions.push(session);
-    model._moveActivity(id, activitiesLength - 1, element);
+    model._moveActivity(model.activities, id, activitiesLength - 1, element);
     activityView._closeLogSessionForm();
     this._storeIDAndRender();
   }
@@ -272,8 +275,6 @@ class App {
     console.log(model.activities);
     console.log(model.categories);
 
-    // const newArr = model.orderByDate(model.activities[10].sessions);
-    // // console.log(model.orderByDate(model.activities[10].sessions));
     mainView._render(model.activities);
   }
 }

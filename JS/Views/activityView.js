@@ -3,7 +3,7 @@ import View from "./view.js";
 const logSessionForm = document.getElementById("logSessionForm");
 const variationSelectDiv = document.getElementById("variationSelectDiv");
 const variationSelect = document.getElementById("variationSelect");
-const sessionDate = document.querySelector(".date_form_input");
+const dateOnActivityForm = document.getElementById("dateOnForm");
 const sessionLength = document.querySelector(".length_form_input");
 const sessionSets = document.querySelector(".sets_form_input");
 const sessionNotes = document.querySelector(".notes_form_input");
@@ -21,13 +21,20 @@ class ActivityView extends View {
     activityHeading.insertAdjacentHTML("afterbegin", markup);
   }
 
+  _setDate(field) {
+    let dateNow = new Date();
+    field.valueAsDate = new Date(
+      Date.UTC(dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate())
+    );
+  }
+
   _openActivityView(e, activities, idToEdit) {
     logSessionForm.style.display = "block";
     addActivityBox.style.display = "none";
     this._render(activities, idToEdit);
 
     // Insert todays date
-    document.getElementById("dateOnForm").valueAsDate = new Date();
+    this._setDate(dateOnActivityForm);
 
     sessionLength.focus();
 
@@ -53,10 +60,22 @@ class ActivityView extends View {
     addActivityBox.style.display = "block";
     // Clear Values
     activityHeading.innerHTML = "";
-    sessionDate.value = "";
+    dateOnActivityForm.value = "";
     sessionLength.value = "";
     sessionSets.value = "";
     sessionNotes.value = "";
+  }
+
+  _fillDropMenu(array) {
+    let options = "";
+
+    array
+      ? array.forEach((element) => {
+          const currentOption = `<option value="${element.type}">${element.type}</option>`;
+          options = options + currentOption;
+        })
+      : "";
+    return options;
   }
 }
 
