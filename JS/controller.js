@@ -13,10 +13,6 @@ const activitiesDisplay = document.querySelector(".activities_display");
 const closeForm = document.querySelector(".close_session_form");
 const submitFormBtn = document.querySelector(".submit_session_form");
 const deleteActivityBtn = document.querySelector(".delete_activity_btn");
-const sessionDate = document.querySelector(".date_form_input");
-const sessionLength = document.querySelector(".length_form_input");
-const sessionSets = document.querySelector(".sets_form_input");
-const sessionNotes = document.querySelector(".notes_form_input");
 const createCategoryBtn = document.getElementById("createCategoryBtn");
 const createCategoryBtn2 = document.getElementById("createCategoryBtn2");
 const categoryDropdownDiv = document.getElementById(
@@ -126,15 +122,9 @@ class App {
     }
   }
 
-  //controller.js:106 Uncaught TypeError: Cannot read properties of null (reading 'id')
   _setIdToEdit(e) {
-    console.log(e.target.closest(".activity_item"));
     idToEdit = +e.target.closest(".activity_item").id.slice(6);
   }
-
-  // switchToWorkoutView() {
-  //   workoutView._render(model.activities);
-  // }
 
   // Processing Activity
   _processActivity(e) {
@@ -188,7 +178,7 @@ class App {
     this._removeVariationInputBox();
 
     const variationBlock = document.getElementById(
-      `id${idToEdit}`
+      `sortId${idToEdit}`
     ).lastElementChild;
 
     variationBlock.insertAdjacentHTML(
@@ -227,27 +217,41 @@ class App {
 
   _submitForm(e) {
     e.preventDefault();
-    const date = new Date(sessionDate.value).toLocaleDateString(config.locale);
-    const length = sessionLength.value;
-    const sets = sessionSets.value;
-    const notes = sessionNotes.value;
-    const id = idToEdit;
-    const element = model.activities[id];
+    // Create Session and push to state
+    const activityObject = model.activities[idToEdit];
     const activitiesLength = model.activities.length;
-    const currentVariation = variationSelect.value;
-    sessionDate.value = "";
-    sessionLength.value = "";
-    const session = {
-      date: date,
-      length: length,
-      sets: sets,
-      notes: notes,
-      variation: currentVariation,
-    };
-    element.sessions.push(session);
-    model._moveActivity(model.activities, id, activitiesLength - 1, element);
+    const session = activityView._generateSession();
+    activityObject.sessions.push(session);
+
+    // Re-order activities & variations
+    model._moveActivity(
+      model.activities,
+      idToEdit,
+      activitiesLength - 1,
+      activityObject
+    );
+    this._reOrderVariation(activityObject);
+
+    // Return to MainView
     activityView._closeLogSessionForm();
     this._storeIDAndRender();
+  }
+
+  _reOrderVariation(activityObject) {
+    const variationsArray = activityObject.variation;
+    const currentVariation = variationSelect.value;
+    const variationObject = model._findVariationObject(
+      variationsArray,
+      currentVariation
+    );
+    const currVarId = variationsArray.indexOf(variationObject);
+    const variationsLength = variationsArray.length;
+    model._moveActivity(
+      variationsArray,
+      currVarId,
+      variationsLength - 1,
+      variationObject
+    );
   }
 
   handleswipe() {

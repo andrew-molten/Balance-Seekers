@@ -95,6 +95,10 @@ class Model {
     });
   };
 
+  _findVariationObject(array, variationName) {
+    return array.find((element) => element.type === variationName);
+  }
+
   // Adjusting Activities
   _moveActivityUpOrDown = function (e, direction, movingID) {
     // const movingID = +e.target.closest(".activity_item").id.slice(2);

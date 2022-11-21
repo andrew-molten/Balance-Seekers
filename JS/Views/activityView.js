@@ -1,4 +1,5 @@
 import View from "./view.js";
+import config from "../config.js";
 
 const logSessionForm = document.getElementById("logSessionForm");
 const variationSelectDiv = document.getElementById("variationSelectDiv");
@@ -46,13 +47,30 @@ class ActivityView extends View {
     if (activities[idToEdit].variation.length === 0) {
       variationSelectDiv.innerHTML = "";
     } else {
-      console.log(activities[idToEdit].variation);
       const variations = this._fillDropMenu(
         activities[idToEdit].variation,
         "element.type"
       );
       variationSelect.insertAdjacentHTML("afterbegin", variations);
     }
+  }
+
+  _generateSession() {
+    const date = new Date(dateOnActivityForm.value).toLocaleDateString(
+      config.locale
+    );
+    const length = sessionLength.value;
+    const sets = sessionSets.value;
+    const notes = sessionNotes.value;
+    const currentVariation = variationSelect.value;
+    const session = {
+      date: date,
+      length: length,
+      sets: sets,
+      notes: notes,
+      variation: currentVariation,
+    };
+    return session;
   }
 
   _closeLogSessionForm(e) {
@@ -64,6 +82,7 @@ class ActivityView extends View {
     sessionLength.value = "";
     sessionSets.value = "";
     sessionNotes.value = "";
+    variationSelect.innerHTML = "";
   }
 
   _fillDropMenu(array) {
