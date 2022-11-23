@@ -1,5 +1,7 @@
 import View from "./view.js";
 
+const categoryDropdown = document.getElementById("categorySelectMainView");
+
 class MainView extends View {
   _generateMarkup() {
     let markup = "";
@@ -51,6 +53,11 @@ class MainView extends View {
 
   _insertMarkup(markup) {
     this._parentElement.insertAdjacentHTML("afterbegin", markup);
+  }
+
+  _insertCategoryHTML(options) {
+    categoryDropdown.innerHTML = "";
+    categoryDropdown.insertAdjacentHTML("afterbegin", options);
   }
 }
 

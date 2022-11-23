@@ -1,10 +1,11 @@
 import config from "../config.js";
-const categoryDropdown = document.getElementById("categorySelectMainView");
+
 const categoryInputDiv = document.getElementById("addCategoryInputDiv");
 const createCategoryBtn = document.getElementById("createCategoryBtn");
 const categoryDropdownDiv = document.getElementById(
   "categorySelectMainViewDiv"
 );
+const categoryInput = document.getElementById("categoryInput");
 
 export default class View {
   _parentElement = document.querySelector(".activities_display");
@@ -28,22 +29,16 @@ export default class View {
   }
 
   _renderCategoryDropMenu(array) {
-    const categories = this._fillDropMenu(array);
-    console.log(array);
-    console.log(categories);
-    categoryDropdown.insertAdjacentHTML("afterbegin", categories);
-  }
-
-  _fillDropMenu(array) {
     let options = "";
 
     array
       ? array.forEach((element) => {
-          const currentOption = `<option value="${element}">${element}</option>`;
+          const currentOption = `<option value="${element.category}">${element.category}</option>`;
           options = options + currentOption;
         })
       : "";
-    return options;
+
+    this._insertCategoryHTML(options);
   }
 
   _displayCategoryInputBox(e) {
@@ -58,6 +53,7 @@ export default class View {
   }
 
   _hideCategoryInputDiv() {
+    categoryInput.value = "";
     categoryInputDiv.style.display = "none";
   }
 }

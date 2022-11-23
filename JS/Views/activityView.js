@@ -10,7 +10,10 @@ const sessionSets = document.querySelector(".sets_form_input");
 const sessionNotes = document.querySelector(".notes_form_input");
 const activityHeading = document.querySelector(".activity_heading_form");
 const addActivityBox = document.querySelector(".add__activity");
-const categoryDropdown = document.getElementById("categorySelectMainView");
+const categoryDropdown = document.getElementById("categorySelectActivityView");
+const createCategoryBtn3 = document.getElementById("createCategoryBtn3");
+const categoryInputDiv2 = document.getElementById("addCategoryInputDiv2");
+const categoryInput2 = document.getElementById("categoryInput2");
 
 class ActivityView extends View {
   _generateMarkup() {
@@ -29,10 +32,11 @@ class ActivityView extends View {
     );
   }
 
-  _openActivityView(e, activities, idToEdit) {
+  _openActivityView(e, activities, idToEdit, categories) {
     logSessionForm.style.display = "block";
     addActivityBox.style.display = "none";
     this._render(activities, idToEdit);
+    this._renderCategoryDropMenu(categories);
 
     // Insert todays date
     this._setDate(dateOnActivityForm);
@@ -47,11 +51,15 @@ class ActivityView extends View {
     if (activities[idToEdit].variation.length === 0) {
       variationSelectDiv.innerHTML = "";
     } else {
-      const variations = this._fillDropMenu(
-        activities[idToEdit].variation,
-        "element.type"
-      );
-      variationSelect.insertAdjacentHTML("afterbegin", variations);
+      let options = "";
+
+      activities[idToEdit].variation
+        ? activities[idToEdit].variation.forEach((element) => {
+            const currentOption = `<option value="${element.type}">${element.type}</option>`;
+            options = options + currentOption;
+          })
+        : "";
+      variationSelect.insertAdjacentHTML("afterbegin", options);
     }
   }
 
@@ -83,18 +91,24 @@ class ActivityView extends View {
     sessionSets.value = "";
     sessionNotes.value = "";
     variationSelect.innerHTML = "";
+    categoryDropdown.innerHTML = "";
+    this._hideCategoryInputDiv();
   }
 
-  _fillDropMenu(array) {
-    let options = "";
+  _insertCategoryHTML(options) {
+    categoryDropdown.innerHTML = "";
+    categoryDropdown.insertAdjacentHTML("afterbegin", options);
+  }
 
-    array
-      ? array.forEach((element) => {
-          const currentOption = `<option value="${element.type}">${element.type}</option>`;
-          options = options + currentOption;
-        })
-      : "";
-    return options;
+  _displayCategoryInputBox(e) {
+    e.preventDefault();
+    createCategoryBtn3.style.display = "none";
+    categoryInputDiv2.style.display = "block";
+  }
+
+  _hideCategoryInputDiv() {
+    categoryInput2.value = "";
+    categoryInputDiv2.style.display = "none";
   }
 }
 

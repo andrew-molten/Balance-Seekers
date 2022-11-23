@@ -15,6 +15,7 @@ const submitFormBtn = document.querySelector(".submit_session_form");
 const deleteActivityBtn = document.querySelector(".delete_activity_btn");
 const createCategoryBtn = document.getElementById("createCategoryBtn");
 const createCategoryBtn2 = document.getElementById("createCategoryBtn2");
+const createCategoryBtn3 = document.getElementById("createCategoryBtn3");
 const categoryDropdownDiv = document.getElementById(
   "categorySelectMainViewDiv"
 );
@@ -22,7 +23,9 @@ const variationSelect = document.getElementById("variationSelect");
 const categoryDropdown = document.getElementById("categorySelectMainView");
 const categoryInputDiv = document.getElementById("addCategoryInputDiv");
 const submitCategoryBtn = document.getElementById("submitCategoryBtn");
+const submitCategoryBtn2 = document.getElementById("submitCategoryBtn2");
 const categoryInput = document.getElementById("categoryInput");
+const categoryInput2 = document.getElementById("categoryInput2");
 
 let idToEdit;
 
@@ -46,7 +49,12 @@ class App {
       "click",
       mainView._displayCategoryInputBox
     );
+    createCategoryBtn3.addEventListener(
+      "click",
+      activityView._displayCategoryInputBox
+    );
     submitCategoryBtn.addEventListener("click", this._processCategoryAdd);
+    submitCategoryBtn2.addEventListener("click", this._processCategoryAdd);
 
     activitiesDisplay.addEventListener("touchstart", (e) => {
       this._setIdToEdit(e);
@@ -89,24 +97,7 @@ class App {
       )
         return;
 
-      this._removeVariationInputBox();
-      activityView._openActivityView(e, model.activities, idToEdit);
-
-      // if (e.target.closest(".push_up_btn")) {
-      //   model._moveActivityUpOrDown(e, "up");
-      // }
-      // if (e.target.closest(".push_down_btn")) {
-      //   model._moveActivityUpOrDown(e, "down");
-      // }
-      // if (e.target.closest(".delete_btn")) {
-      //   this._deleteActivity(e);
-      // }
-      // if (e.target.closest(".log_session_btn")) {
-      //   activityView._openActivityView(e);
-      // }
-      // if (e.target.closest(".add_sub_btn")) {
-      //   this._addVariation(e);
-      // }
+      this._goToActivityView(e);
     });
 
     closeForm.addEventListener("click", activityView._closeLogSessionForm());
@@ -120,6 +111,17 @@ class App {
       mainView._displayCategoryDropMenu();
       mainView._renderCategoryDropMenu(model.categories);
     }
+  }
+
+  _goToActivityView(e) {
+    this._removeVariationInputBox();
+    activityView._openActivityView(
+      e,
+      model.activities,
+      idToEdit,
+      model.categories
+    );
+    mainView._hideCategoryInputDiv();
   }
 
   _setIdToEdit(e) {
@@ -140,13 +142,20 @@ class App {
 
   _processCategoryAdd(e) {
     e.preventDefault();
-    if (!categoryInput.value) return;
+    if (!categoryInput.value && !categoryInput2.value) return;
 
-    const input = categoryInput.value;
+    let input;
+    categoryInput.value
+      ? (input = categoryInput.value)
+      : (input = categoryInput2.value);
 
     model.addCategory(input);
-    mainView._hideCategoryInputDiv();
-    mainView._renderCategoryDropMenu(model.categories);
+
+    categoryInput.value
+      ? mainView._renderCategoryDropMenu(model.categories) &&
+        mainView._hideCategoryInputDiv()
+      : activityView._renderCategoryDropMenu(model.categories) &&
+        activityView._hideCategoryInputDiv();
   }
 
   _storeIDAndRender() {
@@ -277,8 +286,9 @@ class App {
     model.getLocalStorage();
     this._checkIfCategoryExists();
     console.log(model.activities);
-    console.log(model.categories);
-
+    console.log(model.deletedActivities);
+    //Only keep this setLocalStorage() until 1/1/2023 when the other functions in model are also removed.
+    model.setLocalStorage();
     mainView._render(model.activities);
   }
 }
