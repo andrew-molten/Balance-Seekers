@@ -8,24 +8,15 @@ import View from "./views/view.js";
 
 const activityInput = document.querySelector(".add__activity__input");
 const addButton = document.querySelector(".add__btn");
-const addActivity = document.querySelector("add__activity");
 const activitiesDisplay = document.querySelector(".activities_display");
 const closeForm = document.querySelector(".close_session_form");
 const submitFormBtn = document.querySelector(".submit_session_form");
 const deleteActivityBtn = document.querySelector(".delete_activity_btn");
 const createCategoryBtn = document.getElementById("createCategoryBtn");
 const createCategoryBtn2 = document.getElementById("createCategoryBtn2");
-const createCategoryBtn3 = document.getElementById("createCategoryBtn3");
-const categoryDropdownDiv = document.getElementById(
-  "categorySelectMainViewDiv"
-);
 const variationSelect = document.getElementById("variationSelect");
-const categoryDropdown = document.getElementById("categorySelectMainView");
-const categoryInputDiv = document.getElementById("addCategoryInputDiv");
 const submitCategoryBtn = document.getElementById("submitCategoryBtn");
-const submitCategoryBtn2 = document.getElementById("submitCategoryBtn2");
 const categoryInput = document.getElementById("categoryInput");
-const categoryInput2 = document.getElementById("categoryInput2");
 
 let idToEdit;
 
@@ -49,12 +40,7 @@ class App {
       "click",
       mainView._displayCategoryInputBox
     );
-    createCategoryBtn3.addEventListener(
-      "click",
-      activityView._displayCategoryInputBox
-    );
     submitCategoryBtn.addEventListener("click", this._processCategoryAdd);
-    submitCategoryBtn2.addEventListener("click", this._processCategoryAdd);
 
     activitiesDisplay.addEventListener("touchstart", (e) => {
       this._setIdToEdit(e);
@@ -106,7 +92,10 @@ class App {
   }
 
   _checkIfCategoryExists() {
-    if (!model.categories) return;
+    if (model.categories.length < 1) {
+      createCategoryBtn.style.display = "block";
+      return;
+    }
     if (model.categories.length > 0) {
       mainView._displayCategoryDropMenu();
       mainView._renderCategoryDropMenu(model.categories);
@@ -115,13 +104,9 @@ class App {
 
   _goToActivityView(e) {
     this._removeVariationInputBox();
-    activityView._openActivityView(
-      e,
-      model.activities,
-      idToEdit,
-      model.categories
-    );
+    activityView._openActivityView(e, model.activities, idToEdit);
     mainView._hideCategoryInputDiv();
+    this._checkIfCategoryExists();
   }
 
   _setIdToEdit(e) {
@@ -142,20 +127,12 @@ class App {
 
   _processCategoryAdd(e) {
     e.preventDefault();
-    if (!categoryInput.value && !categoryInput2.value) return;
-
+    if (!categoryInput.value) return;
     let input;
-    categoryInput.value
-      ? (input = categoryInput.value)
-      : (input = categoryInput2.value);
-
+    input = categoryInput.value;
     model.addCategory(input);
-
-    categoryInput.value
-      ? mainView._renderCategoryDropMenu(model.categories) &&
-        mainView._hideCategoryInputDiv()
-      : activityView._renderCategoryDropMenu(model.categories) &&
-        activityView._hideCategoryInputDiv();
+    mainView._renderCategoryDropMenu(model.categories);
+    mainView._hideCategoryInputDiv();
   }
 
   _storeIDAndRender() {

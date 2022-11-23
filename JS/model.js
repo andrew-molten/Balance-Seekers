@@ -29,8 +29,6 @@ class Model {
   addCategory = function (input) {
     this.categories.push({ category: input, activities: [] });
     this.setLocalStorage();
-    console.log(this.activities);
-    console.log(this.categories);
   };
 
   // Storage
@@ -88,6 +86,7 @@ class Model {
   };
 
   checkIfIDExistsAndCreate(arr) {
+    if (arr.length < 1) return;
     if (arr[0].hasOwnProperty("sortId") && !arr[0].hasOwnProperty("id")) {
       let id = this.currentHighestID;
       arr.forEach((el) => {
@@ -101,6 +100,7 @@ class Model {
   checkForSortIdAndAssign(arr) {
     // Trying to fix the ID and sortID properties so that both can exist
     // Keep the Below code in until 1/1/2023 - to fix everyones current date - then remove it
+    if (arr.length < 1) return;
     if (!arr[0].hasOwnProperty("sortId")) {
       let sortId = -1;
 

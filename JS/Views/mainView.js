@@ -54,11 +54,6 @@ class MainView extends View {
   _insertMarkup(markup) {
     this._parentElement.insertAdjacentHTML("afterbegin", markup);
   }
-
-  _insertCategoryHTML(options) {
-    categoryDropdown.innerHTML = "";
-    categoryDropdown.insertAdjacentHTML("afterbegin", options);
-  }
 }
 
 export default new MainView();

@@ -10,10 +10,6 @@ const sessionSets = document.querySelector(".sets_form_input");
 const sessionNotes = document.querySelector(".notes_form_input");
 const activityHeading = document.querySelector(".activity_heading_form");
 const addActivityBox = document.querySelector(".add__activity");
-const categoryDropdown = document.getElementById("categorySelectActivityView");
-const createCategoryBtn3 = document.getElementById("createCategoryBtn3");
-const categoryInputDiv2 = document.getElementById("addCategoryInputDiv2");
-const categoryInput2 = document.getElementById("categoryInput2");
 
 class ActivityView extends View {
   _generateMarkup() {
@@ -32,11 +28,11 @@ class ActivityView extends View {
     );
   }
 
-  _openActivityView(e, activities, idToEdit, categories) {
+  _openActivityView(e, activities, idToEdit) {
     logSessionForm.style.display = "block";
     addActivityBox.style.display = "none";
+    activityHeading.style.display = "block";
     this._render(activities, idToEdit);
-    this._renderCategoryDropMenu(categories);
 
     // Insert todays date
     this._setDate(dateOnActivityForm);
@@ -84,6 +80,7 @@ class ActivityView extends View {
   _closeLogSessionForm(e) {
     logSessionForm.style.display = "none";
     addActivityBox.style.display = "block";
+    activityHeading.style.display = "none";
     // Clear Values
     activityHeading.innerHTML = "";
     dateOnActivityForm.value = "";
@@ -91,24 +88,7 @@ class ActivityView extends View {
     sessionSets.value = "";
     sessionNotes.value = "";
     variationSelect.innerHTML = "";
-    categoryDropdown.innerHTML = "";
     this._hideCategoryInputDiv();
-  }
-
-  _insertCategoryHTML(options) {
-    categoryDropdown.innerHTML = "";
-    categoryDropdown.insertAdjacentHTML("afterbegin", options);
-  }
-
-  _displayCategoryInputBox(e) {
-    e.preventDefault();
-    createCategoryBtn3.style.display = "none";
-    categoryInputDiv2.style.display = "block";
-  }
-
-  _hideCategoryInputDiv() {
-    categoryInput2.value = "";
-    categoryInputDiv2.style.display = "none";
   }
 }
 

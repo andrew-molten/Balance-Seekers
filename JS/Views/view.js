@@ -5,6 +5,7 @@ const createCategoryBtn = document.getElementById("createCategoryBtn");
 const categoryDropdownDiv = document.getElementById(
   "categorySelectMainViewDiv"
 );
+const categoryDropdown = document.getElementById("categorySelectMainView");
 const categoryInput = document.getElementById("categoryInput");
 
 export default class View {
@@ -55,5 +56,11 @@ export default class View {
   _hideCategoryInputDiv() {
     categoryInput.value = "";
     categoryInputDiv.style.display = "none";
+  }
+
+  _insertCategoryHTML(options) {
+    categoryDropdown.innerHTML = "";
+    categoryDropdown.insertAdjacentHTML("afterbegin", options);
+    categoryDropdownDiv.style.display = " block";
   }
 }
