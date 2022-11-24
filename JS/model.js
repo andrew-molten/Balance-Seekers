@@ -142,6 +142,10 @@ class Model {
     return array.find((element) => element.type === variationName);
   }
 
+  _findCategory(array, categoryName) {
+    return array.find((element) => element.category === categoryName);
+  }
+
   // Adjusting Activities
   _moveActivityUpOrDown = function (e, direction, movingID) {
     // const movingID = +e.target.closest(".activity_item").id.slice(2);
@@ -153,6 +157,13 @@ class Model {
 
     this._moveActivity(this.activities, movingID, newID, element);
   };
+
+  _addVarationToCategory(activityObject, newVariation) {
+    const id = activityObject.id;
+    const categoryObject = this.categories.find((element) => element.id === id);
+    console.log(activityObject);
+    console.log(categoryObject);
+  }
 
   _moveActivity = function (array, oldID, newID, element) {
     array.splice(oldID, 1);

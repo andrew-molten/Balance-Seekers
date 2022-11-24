@@ -21,7 +21,7 @@ export default class View {
     this._insertMarkup(markup);
   }
 
-  _clearInputField() {
+  _clearActivityInputField() {
     document.querySelector(".add__activity__input").value = "";
   }
 

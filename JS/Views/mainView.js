@@ -1,6 +1,7 @@
 import View from "./view.js";
 
 const categoryDropdown = document.getElementById("categorySelectMainView");
+const categoryViewBtnsDiv = document.getElementById("categoryViewBtnsDiv");
 
 class MainView extends View {
   _generateMarkup() {
@@ -35,6 +36,18 @@ class MainView extends View {
         </ol>
         </li>
     `;
+  }
+
+  _generateCategoryTabs(categories) {
+    let markup = "";
+    categories.forEach((el) => {
+      const currCategory = `<button class="btn ${el.category}Btn" id="${el.category}Btn">
+      <span>${el.category}</span>
+      </button>`;
+      markup = markup + currCategory;
+    });
+    categoryViewBtnsDiv.insertAdjacentHTML("beforeend", markup);
+    categoryViewBtnsDiv.style.display = "block";
   }
 
   _variationsMarkup(activity) {

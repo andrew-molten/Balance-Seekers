@@ -3,6 +3,7 @@ import mainView from "./views/mainView.js";
 import config from "./config.js";
 
 import activityView from "./views/activityView.js";
+import categoryView from "./views/categoryView.js";
 import View from "./views/view.js";
 // Issue that I was having is that making the class is fine but then you still need to call the class into being i.e - const view = new View(), which can then be exported and called at the same time or called after importing.
 
@@ -17,6 +18,8 @@ const createCategoryBtn2 = document.getElementById("createCategoryBtn2");
 const variationSelect = document.getElementById("variationSelect");
 const submitCategoryBtn = document.getElementById("submitCategoryBtn");
 const categoryInput = document.getElementById("categoryInput");
+const categoryDropdown = document.getElementById("categorySelectMainView");
+const categoryViewBtnsDiv = document.getElementById("categoryViewBtnsDiv");
 
 let idToEdit;
 
@@ -67,6 +70,15 @@ class App {
       this.swipeDirection = "";
     });
 
+    categoryViewBtnsDiv.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (!e.target.closest("span")) return;
+      const category = e.target.closest("span").innerHTML;
+      const categoryObject = model._findCategory(model.categories, category);
+      categoryView._render(model.activities);
+      categoryView._openCategoryView(categoryObject, model.activities);
+    });
+
     // Need to implement a double tap for this
     // activitiesDisplay.addEventListener("dblclick", (e) => {
     //   this._setIdToEdit(e)
@@ -96,10 +108,9 @@ class App {
       createCategoryBtn.style.display = "block";
       return;
     }
-    if (model.categories.length > 0) {
-      mainView._displayCategoryDropMenu();
-      mainView._renderCategoryDropMenu(model.categories);
-    }
+    mainView._displayCategoryDropMenu();
+    mainView._renderCategoryDropMenu(model.categories);
+    mainView._generateCategoryTabs(model.categories);
   }
 
   _goToActivityView(e) {
@@ -110,6 +121,7 @@ class App {
   }
 
   _setIdToEdit(e) {
+    // Returns "sortId"
     idToEdit = +e.target.closest(".activity_item").id.slice(6);
   }
 
@@ -120,9 +132,22 @@ class App {
 
     const activity = activityInput.value;
 
-    mainView._clearInputField();
+    mainView._clearActivityInputField();
     model.createActivity(activity);
     this._storeIDAndRender();
+    this._pushActivityToCategory(model.activities[0]);
+  }
+
+  _pushActivityToCategory(activityObject) {
+    if (model.categories.length < 1) return;
+    const categoryName = categoryDropdown.value;
+    const categoryObject = model._findCategory(model.categories, categoryName);
+    const newActivity = {
+      activity: activityObject.activity,
+      id: activityObject.id,
+    };
+    categoryObject.activities.push(newActivity);
+    console.log(categoryObject);
   }
 
   _processCategoryAdd(e) {
@@ -197,6 +222,7 @@ class App {
     const input = addVariationInput.value;
     if (input === "") return;
     model.activities[itemID].variation.push({ type: input });
+    model._addVarationToCategory(model.activities[itemID], input);
     addVariationInputContainer.innerHTML = "";
     this._storeIDAndRender();
   }
@@ -264,6 +290,7 @@ class App {
     this._checkIfCategoryExists();
     console.log(model.activities);
     console.log(model.deletedActivities);
+    console.log(model.categories);
     //Only keep this setLocalStorage() until 1/1/2023 when the other functions in model are also removed.
     model.setLocalStorage();
     mainView._render(model.activities);
