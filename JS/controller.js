@@ -56,7 +56,8 @@ class App {
       this.handleswipe();
       if (this.swipeDirection === "left") {
         model._moveActivityUpOrDown(e, "down", idToEdit);
-        this._storeIDAndRender();
+        this._storeSortIDs(model.activities);
+        mainView._render(model.activities);
       }
       if (this.swipeDirection === "right") {
         this._addVariation(e);
@@ -72,11 +73,7 @@ class App {
 
     categoryViewBtnsDiv.addEventListener("click", (e) => {
       e.preventDefault();
-      if (!e.target.closest("span")) return;
-      const category = e.target.closest("span").innerHTML;
-      const categoryObject = model._findCategory(model.categories, category);
-      categoryView._render(model.activities);
-      categoryView._openCategoryView(categoryObject, model.activities);
+      this._launchCategoryView(e);
     });
 
     // Need to implement a double tap for this
@@ -103,6 +100,13 @@ class App {
     deleteActivityBtn.addEventListener("click", (e) => this._deleteActivity(e));
   }
 
+  _launchCategoryView(e) {
+    if (!e.target.closest("span")) return;
+    const category = e.target.closest("span").innerHTML;
+    const categoryObject = model._findCategory(model.categories, category);
+    // categoryView._render(model.activities);
+    categoryView._openCategoryView(categoryObject, model.activities);
+  }
   _checkIfCategoryExists() {
     if (model.categories.length < 1) {
       createCategoryBtn.style.display = "block";
@@ -131,23 +135,21 @@ class App {
     if (!activityInput.value) return;
 
     const activity = activityInput.value;
+    const category = categoryDropdown.value;
 
     mainView._clearActivityInputField();
-    model.createActivity(activity);
-    this._storeIDAndRender();
-    this._pushActivityToCategory(model.activities[0]);
+    model.createActivity(activity, category);
+    this._storeSortIDs(model.activities);
+    this._pushActivityToCategory(category);
+    mainView._render(model.activities);
   }
 
-  _pushActivityToCategory(activityObject) {
-    if (model.categories.length < 1) return;
-    const categoryName = categoryDropdown.value;
-    const categoryObject = model._findCategory(model.categories, categoryName);
-    const newActivity = {
-      activity: activityObject.activity,
-      id: activityObject.id,
-    };
-    categoryObject.activities.push(newActivity);
-    console.log(categoryObject);
+  _pushActivityToCategory(category) {
+    if (model.categories.length > 0) {
+      model._pushActivityToCategory(model.activities[0], category);
+      const categoryObject = model._findCategory(model.categories, category);
+      this._storeSortIDs(categoryObject.activities);
+    }
   }
 
   _processCategoryAdd(e) {
@@ -160,10 +162,9 @@ class App {
     mainView._hideCategoryInputDiv();
   }
 
-  _storeIDAndRender() {
-    model.setIDs(model.activities);
+  _storeSortIDs(array) {
+    model.setIDs(array);
     model.setLocalStorage();
-    mainView._render(model.activities);
   }
 
   _deleteActivity(e) {
@@ -172,7 +173,8 @@ class App {
     model.deletedActivities.push(element);
     model.activities.splice(idToEdit, 1);
     activityView._closeLogSessionForm();
-    this._storeIDAndRender();
+    this._storeSortIDs(model.activities);
+    mainView._render(model.activities);
   }
 
   _removeVariationInputBox() {
@@ -219,18 +221,34 @@ class App {
     const addVariationInputContainer = document.querySelector(
       ".add_variation_input_container"
     );
+    const activityObject = model.activities[itemID];
     const input = addVariationInput.value;
     if (input === "") return;
-    model.activities[itemID].variation.push({ type: input });
-    model._addVarationToCategory(model.activities[itemID], input);
+    activityObject.variation.push({ type: input });
+    this._storeSortIDs(model.activities);
+    mainView._render(model.activities);
     addVariationInputContainer.innerHTML = "";
-    this._storeIDAndRender();
+
+    if (model.categories.length > 0) {
+      model._addVarationToCategory(
+        activityObject,
+        input,
+        activityObject.category
+      );
+      const categoryObject = model._findCategory(
+        model.categories,
+        activityObject.category
+      );
+      this._storeSortIDs(categoryObject.activities);
+    }
   }
 
   _submitForm(e) {
     e.preventDefault();
     // Create Session and push to state
     const activityObject = model.activities[idToEdit];
+    const activityID = model.activities[idToEdit].id;
+    const activityCategory = model.activities[idToEdit].category;
     const activitiesLength = model.activities.length;
     const session = activityView._generateSession();
     activityObject.sessions.push(session);
@@ -246,7 +264,17 @@ class App {
 
     // Return to MainView
     activityView._closeLogSessionForm();
-    this._storeIDAndRender();
+    this._storeSortIDs(model.activities);
+    mainView._render(model.activities);
+
+    if (model.categories > 0 && activityCategory) {
+      const categoryHoldingActivity =
+        model.categories.activityCategory.activities;
+      const categoryActivityObject = model._findActivityObjectByID(
+        categoryHoldingActivity,
+        activityID
+      );
+    }
   }
 
   _reOrderVariation(activityObject) {

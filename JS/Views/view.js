@@ -7,6 +7,7 @@ const categoryDropdownDiv = document.getElementById(
 );
 const categoryDropdown = document.getElementById("categorySelectMainView");
 const categoryInput = document.getElementById("categoryInput");
+const categoryViewDiv = document.getElementById("categoryViewDiv");
 
 export default class View {
   _parentElement = document.querySelector(".activities_display");
@@ -27,6 +28,8 @@ export default class View {
 
   _clear() {
     this._parentElement.innerHTML = "";
+    categoryViewDiv.innerHTML = "";
+    console.log("clearing");
   }
 
   _renderCategoryDropMenu(array) {

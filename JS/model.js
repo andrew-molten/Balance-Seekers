@@ -11,14 +11,15 @@ class Model {
   // export const activities = [];
   // export const deletedActivities = [];
 
-  createActivity = function (input) {
+  createActivity = function (activity, category) {
     this.activities.splice(0, 0, {
-      activity: input,
+      activity: activity,
       sessions: [],
       variation: [],
       id: this.assignID(),
     });
-    this.setLocalStorage();
+    if (this.categories.length < 1) return this.setLocalStorage();
+    this.activities[0].category = category;
   };
 
   assignID() {
@@ -146,6 +147,10 @@ class Model {
     return array.find((element) => element.category === categoryName);
   }
 
+  _findActivityObjectByID(array, activityID) {
+    return array.find((element) => element.id === activityID);
+  }
+
   // Adjusting Activities
   _moveActivityUpOrDown = function (e, direction, movingID) {
     // const movingID = +e.target.closest(".activity_item").id.slice(2);
@@ -158,11 +163,26 @@ class Model {
     this._moveActivity(this.activities, movingID, newID, element);
   };
 
-  _addVarationToCategory(activityObject, newVariation) {
-    const id = activityObject.id;
-    const categoryObject = this.categories.find((element) => element.id === id);
-    console.log(activityObject);
+  _pushActivityToCategory(activityObject, categoryName) {
+    if (this.categories.length < 1) return;
+    const categoryObject = this._findCategory(this.categories, categoryName);
+    categoryObject.activities.splice(0, 0, {
+      activity: activityObject.activity,
+      id: activityObject.id,
+      variation: [],
+    });
     console.log(categoryObject);
+  }
+
+  _addVarationToCategory(activityObject, newVariation, category) {
+    const id = activityObject.id;
+    const categoryObject = this.categories.find(
+      (element) => element.category === category
+    );
+    const activityToEdit = categoryObject.activities.find(
+      (element) => element.id === id
+    );
+    activityToEdit.variation.push({ type: newVariation });
   }
 
   _moveActivity = function (array, oldID, newID, element) {
