@@ -20,6 +20,7 @@ const submitCategoryBtn = document.getElementById("submitCategoryBtn");
 const categoryInput = document.getElementById("categoryInput");
 const categoryDropdown = document.getElementById("categorySelectMainView");
 const categoryViewBtnsDiv = document.getElementById("categoryViewBtnsDiv");
+const categoryViewDiv = document.getElementById("categoryViewDiv");
 
 let idToEdit;
 
@@ -76,6 +77,10 @@ class App {
       this._launchCategoryView(e);
     });
 
+    categoryViewDiv.addEventListener("click", (e) => {
+      e.preventDefault();
+    });
+
     // Need to implement a double tap for this
     // activitiesDisplay.addEventListener("dblclick", (e) => {
     //   this._setIdToEdit(e)
@@ -102,6 +107,8 @@ class App {
 
   _launchCategoryView(e) {
     if (!e.target.closest("span")) return;
+    if (e.target.innerHTML === "All") return this.init();
+    console.log(e);
     const category = e.target.closest("span").innerHTML;
     const categoryObject = model._findCategory(model.categories, category);
     // categoryView._render(model.activities);
@@ -110,11 +117,11 @@ class App {
   _checkIfCategoryExists() {
     if (model.categories.length < 1) {
       createCategoryBtn.style.display = "block";
-      return;
+      return false;
     }
     mainView._displayCategoryDropMenu();
     mainView._renderCategoryDropMenu(model.categories);
-    mainView._generateCategoryTabs(model.categories);
+    return true;
   }
 
   _goToActivityView(e) {
@@ -160,6 +167,7 @@ class App {
     model.addCategory(input);
     mainView._renderCategoryDropMenu(model.categories);
     mainView._hideCategoryInputDiv();
+    mainView._generateCategoryTabs();
   }
 
   _storeSortIDs(array) {
@@ -322,6 +330,9 @@ class App {
     //Only keep this setLocalStorage() until 1/1/2023 when the other functions in model are also removed.
     model.setLocalStorage();
     mainView._render(model.activities);
+    this._checkIfCategoryExists()
+      ? mainView._generateCategoryTabs(model.categories)
+      : "";
   }
 }
 

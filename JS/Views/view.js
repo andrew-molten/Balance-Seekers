@@ -8,6 +8,7 @@ const categoryDropdownDiv = document.getElementById(
 const categoryDropdown = document.getElementById("categorySelectMainView");
 const categoryInput = document.getElementById("categoryInput");
 const categoryViewDiv = document.getElementById("categoryViewDiv");
+const categoryViewBtnsDiv = document.getElementById("categoryViewBtnsDiv");
 
 export default class View {
   _parentElement = document.querySelector(".activities_display");
@@ -29,7 +30,6 @@ export default class View {
   _clear() {
     this._parentElement.innerHTML = "";
     categoryViewDiv.innerHTML = "";
-    console.log("clearing");
   }
 
   _renderCategoryDropMenu(array) {
@@ -65,5 +65,16 @@ export default class View {
     categoryDropdown.innerHTML = "";
     categoryDropdown.insertAdjacentHTML("afterbegin", options);
     categoryDropdownDiv.style.display = " block";
+  }
+
+  _hideShowAllActivitiesBtn() {
+    const showAllActivitiesBtn = document.getElementById(
+      "showAllActivitiesBtn"
+    );
+    showAllActivitiesBtn.style.display = "none";
+  }
+
+  _clearCategoryViewBtns() {
+    categoryViewBtnsDiv.innerHTML = "";
   }
 }

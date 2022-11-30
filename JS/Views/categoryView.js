@@ -1,27 +1,33 @@
 import View from "./view";
 
 const categoryViewDiv = document.getElementById("categoryViewDiv");
+const showAllActivitiesBtn = document.getElementById("showAllActivitiesBtn");
 
 class CategoryView extends View {
   _openCategoryView(category, activities) {
-    console.log(category);
     // categoryViewDiv.innerHTML = "";
     this._clear();
     const markup = this._generateMarkup(category.activities);
     this._insertMarkup(markup);
+    this._displayShowAllActivitiesBtn();
   }
   _generateMarkup(activities) {
-    console.log("generating");
-    let markup = "";
-    // let markup = `<ol class="activities_display">`;
+    let markup = `<ol class="category_view_list">`;
 
     // Create markup for each activity and add it to markup string
     activities.forEach((activity) => {
       const individualMarkup = this._activityMarkup(activity, activity.sortId);
       markup = markup + individualMarkup;
     });
-    // markup = markup + "</ol>";
+    markup = markup + "</ol>";
     return markup;
+  }
+
+  _displayShowAllActivitiesBtn() {
+    const showAllActivitiesBtn = document.getElementById(
+      "showAllActivitiesBtn"
+    );
+    showAllActivitiesBtn.style.display = "block";
   }
 
   _activityMarkup(activity, sortId) {

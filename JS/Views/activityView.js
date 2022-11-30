@@ -32,6 +32,7 @@ class ActivityView extends View {
     logSessionForm.style.display = "block";
     addActivityBox.style.display = "none";
     activityHeading.style.display = "block";
+    this._clearCategoryViewBtns();
     this._render(activities, idToEdit);
 
     // Insert todays date
