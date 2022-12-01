@@ -34,7 +34,9 @@ class App {
   constructor() {
     // this.reset();
     this.init();
-    // Event Handlers
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////// Event Handlers ////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////
     addButton.addEventListener("click", this._processActivity.bind(this));
     createCategoryBtn.addEventListener(
       "click",
@@ -105,36 +107,9 @@ class App {
     deleteActivityBtn.addEventListener("click", (e) => this._deleteActivity(e));
   }
 
-  _launchCategoryView(e) {
-    if (!e.target.closest("span")) return;
-    if (e.target.innerHTML === "All") return this.init();
-    console.log(e);
-    const category = e.target.closest("span").innerHTML;
-    const categoryObject = model._findCategory(model.categories, category);
-    // categoryView._render(model.activities);
-    categoryView._openCategoryView(categoryObject, model.activities);
-  }
-  _checkIfCategoryExists() {
-    if (model.categories.length < 1) {
-      createCategoryBtn.style.display = "block";
-      return false;
-    }
-    mainView._displayCategoryDropMenu();
-    mainView._renderCategoryDropMenu(model.categories);
-    return true;
-  }
-
-  _goToActivityView(e) {
-    this._removeVariationInputBox();
-    activityView._openActivityView(e, model.activities, idToEdit);
-    mainView._hideCategoryInputDiv();
-    this._checkIfCategoryExists();
-  }
-
-  _setIdToEdit(e) {
-    // Returns "sortId"
-    idToEdit = +e.target.closest(".activity_item").id.slice(6);
-  }
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////// ADD NEW ACTIVITY  //////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Processing Activity
   _processActivity(e) {
@@ -151,49 +126,14 @@ class App {
     mainView._render(model.activities);
   }
 
-  _pushActivityToCategory(category) {
-    if (model.categories.length > 0) {
-      model._pushActivityToCategory(model.activities[0], category);
-      const categoryObject = model._findCategory(model.categories, category);
-      this._storeSortIDs(categoryObject.activities);
-    }
-  }
-
-  _processCategoryAdd(e) {
-    e.preventDefault();
-    if (!categoryInput.value) return;
-    let input;
-    input = categoryInput.value;
-    model.addCategory(input);
-    mainView._renderCategoryDropMenu(model.categories);
-    mainView._hideCategoryInputDiv();
-    mainView._generateCategoryTabs();
-  }
-
   _storeSortIDs(array) {
-    console.log(array);
     model.setIDs(array);
     model.setLocalStorage();
   }
 
-  _deleteActivity(e) {
-    e.preventDefault();
-    const element = model.activities[idToEdit];
-    model.deletedActivities.push(element);
-    model.activities.splice(idToEdit, 1);
-    activityView._closeLogSessionForm();
-    this._storeSortIDs(model.activities);
-    mainView._render(model.activities);
-  }
-
-  _removeVariationInputBox() {
-    if (document.querySelector(".add_variation_input")) {
-      const existingVariationInputBox = document.querySelector(
-        ".add_variation_input"
-      );
-      existingVariationInputBox.parentElement.innerHTML = "";
-    }
-  }
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////// VARIATIONS  //////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
 
   _addVariation(e) {
     // Guard clause to check for any other text boxes
@@ -252,6 +192,96 @@ class App {
     }
   }
 
+  _removeVariationInputBox() {
+    if (document.querySelector(".add_variation_input")) {
+      const existingVariationInputBox = document.querySelector(
+        ".add_variation_input"
+      );
+      existingVariationInputBox.parentElement.innerHTML = "";
+    }
+  }
+
+  _reOrderVariation(activityObject) {
+    const variationsArray = activityObject.variation;
+    if (variationsArray.length === 0) return;
+    const currentVariation = variationSelect.value;
+    const variationObject = model._findVariationObject(
+      variationsArray,
+      currentVariation
+    );
+    const currVarId = variationsArray.indexOf(variationObject);
+    const variationsLength = variationsArray.length;
+    model._moveActivity(
+      variationsArray,
+      currVarId,
+      variationsLength - 1,
+      variationObject
+    );
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////// CATEGORIES  //////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _launchCategoryView(e) {
+    if (!e.target.closest("span")) return;
+    if (e.target.innerHTML === "All") return this.init();
+    console.log(e);
+    const category = e.target.closest("span").innerHTML;
+    const categoryObject = model._findCategory(model.categories, category);
+    // categoryView._render(model.activities);
+    categoryView._openCategoryView(categoryObject, model.activities);
+  }
+  _checkIfCategoryExists() {
+    if (model.categories.length < 1) {
+      createCategoryBtn.style.display = "block";
+      return false;
+    }
+    mainView._displayCategoryDropMenu();
+    mainView._renderCategoryDropMenu(model.categories);
+    return true;
+  }
+
+  _pushActivityToCategory(category) {
+    if (model.categories.length > 0) {
+      model._pushActivityToCategory(model.activities[0], category);
+      const categoryObject = model._findCategory(model.categories, category);
+      this._storeSortIDs(categoryObject.activities);
+    }
+  }
+
+  _processCategoryAdd(e) {
+    e.preventDefault();
+    if (!categoryInput.value) return;
+    let input;
+    input = categoryInput.value;
+    model.addCategory(input);
+    mainView._renderCategoryDropMenu(model.categories);
+    mainView._hideCategoryInputDiv();
+    mainView._generateCategoryTabs();
+  }
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////// ACTIVITY VIEW  //////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _goToActivityView(e) {
+    this._removeVariationInputBox();
+    activityView._openActivityView(e, model.activities, idToEdit);
+    mainView._hideCategoryInputDiv();
+    this._checkIfCategoryExists();
+  }
+
+  _deleteActivity(e) {
+    e.preventDefault();
+    const element = model.activities[idToEdit];
+    model.deletedActivities.push(element);
+    model.activities.splice(idToEdit, 1);
+    activityView._closeLogSessionForm();
+    this._storeSortIDs(model.activities);
+    mainView._render(model.activities);
+  }
+
   _submitForm(e) {
     e.preventDefault();
     // Create Session and push to state
@@ -286,22 +316,13 @@ class App {
     }
   }
 
-  _reOrderVariation(activityObject) {
-    const variationsArray = activityObject.variation;
-    if (variationsArray.length === 0) return;
-    const currentVariation = variationSelect.value;
-    const variationObject = model._findVariationObject(
-      variationsArray,
-      currentVariation
-    );
-    const currVarId = variationsArray.indexOf(variationObject);
-    const variationsLength = variationsArray.length;
-    model._moveActivity(
-      variationsArray,
-      currVarId,
-      variationsLength - 1,
-      variationObject
-    );
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////// USER INTERFACE  //////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  _setIdToEdit(e) {
+    // Returns "sortId"
+    idToEdit = +e.target.closest(".activity_item").id.slice(6);
   }
 
   handleswipe() {

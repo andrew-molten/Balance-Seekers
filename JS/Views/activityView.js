@@ -44,6 +44,10 @@ class ActivityView extends View {
     this._variationMenuGenerator(activities, idToEdit);
   }
 
+  _showActivityCategory(activities, idToEdit) {
+    const activityCategory = activities[idToEdit].category;
+  }
+
   _variationMenuGenerator(activities, idToEdit) {
     if (activities[idToEdit].variation.length === 0) {
       variationSelectDiv.innerHTML = "";
