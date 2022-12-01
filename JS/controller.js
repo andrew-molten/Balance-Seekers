@@ -171,6 +171,7 @@ class App {
   }
 
   _storeSortIDs(array) {
+    console.log(array);
     model.setIDs(array);
     model.setLocalStorage();
   }
@@ -287,6 +288,7 @@ class App {
 
   _reOrderVariation(activityObject) {
     const variationsArray = activityObject.variation;
+    if (variationsArray.length === 0) return;
     const currentVariation = variationSelect.value;
     const variationObject = model._findVariationObject(
       variationsArray,
