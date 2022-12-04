@@ -34,6 +34,7 @@ export default class View {
 
   _renderCategoryDropMenu(array) {
     let options = "";
+    console.log(array);
 
     array
       ? array.forEach((element) => {
@@ -54,6 +55,7 @@ export default class View {
   _displayCategoryDropMenu() {
     createCategoryBtn.style.display = "none";
     categoryDropdownDiv.style.display = "block";
+    categoryDropdown.style.display = "inline-block";
   }
 
   _hideCategoryInputDiv() {

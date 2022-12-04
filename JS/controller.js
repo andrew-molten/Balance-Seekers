@@ -21,6 +21,10 @@ const categoryInput = document.getElementById("categoryInput");
 const categoryDropdown = document.getElementById("categorySelectMainView");
 const categoryViewBtnsDiv = document.getElementById("categoryViewBtnsDiv");
 const categoryViewDiv = document.getElementById("categoryViewDiv");
+const activityCategorySubtitle = document.getElementById(
+  "activityCategorySubtitle"
+);
+const assignToCategoryBtn = document.getElementById("assignToCategoryBtn");
 
 let idToEdit;
 
@@ -37,22 +41,17 @@ class App {
     ////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////// Event Handlers ////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////
+
+    //////////// MAIN VIEW//////////
+
     addButton.addEventListener("click", this._processActivity.bind(this));
-    createCategoryBtn.addEventListener(
-      "click",
-      mainView._displayCategoryInputBox
-    );
-    createCategoryBtn2.addEventListener(
-      "click",
-      mainView._displayCategoryInputBox
-    );
-    submitCategoryBtn.addEventListener("click", this._processCategoryAdd);
 
     activitiesDisplay.addEventListener("touchstart", (e) => {
       this._setIdToEdit(e);
       this.touchstartX = e.changedTouches[0].screenX;
       this.touchstartY = e.changedTouches[0].screenY;
     });
+
     activitiesDisplay.addEventListener("touchend", (e) => {
       this.touchendX = e.changedTouches[0].screenX;
       this.touchendY = e.changedTouches[0].screenY;
@@ -74,22 +73,6 @@ class App {
       this.swipeDirection = "";
     });
 
-    categoryViewBtnsDiv.addEventListener("click", (e) => {
-      e.preventDefault();
-      this._launchCategoryView(e);
-    });
-
-    categoryViewDiv.addEventListener("click", (e) => {
-      e.preventDefault();
-    });
-
-    // Need to implement a double tap for this
-    // activitiesDisplay.addEventListener("dblclick", (e) => {
-    //   this._setIdToEdit(e)
-    //   console.log("doubleclick");
-    //   this._addVariation(e);
-    // });
-
     activitiesDisplay.addEventListener("click", (e) => {
       e.preventDefault();
       // Guard clauses to stop logSession Form if variation text box exists or button is pressed
@@ -102,9 +85,47 @@ class App {
       this._goToActivityView(e);
     });
 
+    ////////// CATEGORY BUTTONS ////////////
+
+    createCategoryBtn.addEventListener(
+      "click",
+      mainView._displayCategoryInputBox
+    );
+    createCategoryBtn2.addEventListener(
+      "click",
+      mainView._displayCategoryInputBox
+    );
+    submitCategoryBtn.addEventListener("click", this._processCategoryAdd);
+
+    /////////// CATEGORY VIEW /////////////
+
+    categoryViewBtnsDiv.addEventListener("click", (e) => {
+      e.preventDefault();
+      this._launchCategoryView(e);
+    });
+
+    categoryViewDiv.addEventListener("click", (e) => {
+      e.preventDefault();
+    });
+
+    /////// ACTIVITY VIEW ///////////
+
     closeForm.addEventListener("click", activityView._closeLogSessionForm());
     submitFormBtn.addEventListener("click", (e) => this._submitForm(e));
     deleteActivityBtn.addEventListener("click", (e) => this._deleteActivity(e));
+    activityCategorySubtitle.addEventListener("click", (e) => {
+      e.preventDefault();
+      this._renderCategoryDropMenuActivityView(model.categories);
+    });
+    assignToCategoryBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      this._renderCategoryDropMenuActivityView(model.categories);
+    });
+    categoryDropdown.addEventListener("click", (e) => {
+      if (logSessionForm.style.display === "block") {
+        console.log("ActivityView displaying");
+      }
+    });
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -237,9 +258,13 @@ class App {
       createCategoryBtn.style.display = "block";
       return false;
     }
+
+    return true;
+  }
+
+  _renderCategoryDropMenu() {
     mainView._displayCategoryDropMenu();
     mainView._renderCategoryDropMenu(model.categories);
-    return true;
   }
 
   _pushActivityToCategory(category) {
@@ -270,6 +295,16 @@ class App {
     activityView._openActivityView(e, model.activities, idToEdit);
     mainView._hideCategoryInputDiv();
     this._checkIfCategoryExists();
+    if (this._checkIfCategoryExists()) {
+      activityView._showActivityCategory(model.activities, idToEdit);
+    }
+  }
+
+  _renderCategoryDropMenuActivityView(categories) {
+    activityView._renderCategoryDropMenu(categories);
+    activityView._displayCategoryDropMenu(categories);
+    activityCategorySubtitle.style.display = "none";
+    assignToCategoryBtn.style.display = "none";
   }
 
   _deleteActivity(e) {
@@ -346,6 +381,7 @@ class App {
   }
   init() {
     model.getLocalStorage();
+    /// Test later whether we need the below checkIfCategoryExists
     this._checkIfCategoryExists();
     console.log(model.activities);
     console.log(model.deletedActivities);
@@ -353,9 +389,10 @@ class App {
     //Only keep this setLocalStorage() until 1/1/2023 when the other functions in model are also removed.
     model.setLocalStorage();
     mainView._render(model.activities);
-    this._checkIfCategoryExists()
-      ? mainView._generateCategoryTabs(model.categories)
-      : "";
+    if (this._checkIfCategoryExists()) {
+      mainView._generateCategoryTabs(model.categories);
+      this._renderCategoryDropMenu();
+    }
   }
 }
 

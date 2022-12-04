@@ -10,6 +10,14 @@ const sessionSets = document.querySelector(".sets_form_input");
 const sessionNotes = document.querySelector(".notes_form_input");
 const activityHeading = document.querySelector(".activity_heading_form");
 const addActivityBox = document.querySelector(".add__activity");
+const assignToCategoryBtn = document.getElementById("assignToCategoryBtn");
+const categoryDropdown = document.getElementById("categorySelectMainView");
+const activityCategorySubtitle = document.getElementById(
+  "activityCategorySubtitle"
+);
+const categoryDropdownDiv = document.getElementById(
+  "categorySelectMainViewDiv"
+);
 
 class ActivityView extends View {
   _generateMarkup() {
@@ -46,6 +54,15 @@ class ActivityView extends View {
 
   _showActivityCategory(activities, idToEdit) {
     const activityCategory = activities[idToEdit].category;
+    categoryDropdown.style.display = "none";
+    activityCategorySubtitle.innerHTML = "";
+    if (activityCategory) {
+      activityCategorySubtitle.innerHTML = `${activityCategory}`;
+      activityCategorySubtitle.style.display = "inline-block";
+    } else {
+      assignToCategoryBtn.style.display = "block";
+      activityCategorySubtitle.style.display = "none";
+    }
   }
 
   _variationMenuGenerator(activities, idToEdit) {
@@ -80,6 +97,13 @@ class ActivityView extends View {
       variation: currentVariation,
     };
     return session;
+  }
+
+  _displayCategoryDropMenu(categories) {
+    createCategoryBtn.style.display = "none";
+    categoryDropdownDiv.style.display = "block";
+    categoryDropdown.style.display = "inline-block";
+    categoryDropdown.size = categories.length > 5 ? 3 : categories.length;
   }
 
   _closeLogSessionForm(e) {
