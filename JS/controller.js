@@ -122,10 +122,34 @@ class App {
       this._renderCategoryDropMenuActivityView(model.categories);
     });
     categoryDropdown.addEventListener("click", (e) => {
-      if (logSessionForm.style.display === "block") {
-        console.log("ActivityView displaying");
-      }
+      if (logSessionForm.style.display === "none") return;
+      if (logSessionForm.style.display === "block")
+        return this._updateActivityCategory(e);
     });
+  }
+
+  _updateActivityCategory(e) {
+    const category = e.target.innerHTML;
+    const activityInModel = model.activities[idToEdit];
+    if (activityInModel.category === category) {
+      console.log("same category");
+      //Hide the dropMenu
+
+      //Put heading back up without changing anything
+    }
+    if (activityInModel.category !== category) {
+      console.log("different category");
+      // this._pushActivityToCategory(category, activityInModel);
+
+      //Remove this activity from the category that it is currently in
+
+      //Hide dropMenu
+
+      //Update heading with new heading
+    }
+
+    console.log(model.categories);
+    console.log(model.activities[idToEdit]);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +167,7 @@ class App {
     mainView._clearActivityInputField();
     model.createActivity(activity, category);
     this._storeSortIDs(model.activities);
-    this._pushActivityToCategory(category);
+    this._pushActivityToCategory(category, model.activities[0]);
     mainView._render(model.activities);
   }
 
@@ -267,9 +291,9 @@ class App {
     mainView._renderCategoryDropMenu(model.categories);
   }
 
-  _pushActivityToCategory(category) {
+  _pushActivityToCategory(category, activityInModel) {
     if (model.categories.length > 0) {
-      model._pushActivityToCategory(model.activities[0], category);
+      model._pushActivityToCategory(activityInModel, category);
       const categoryObject = model._findCategory(model.categories, category);
       this._storeSortIDs(categoryObject.activities);
     }
