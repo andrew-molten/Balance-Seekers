@@ -117,6 +117,7 @@ class ActivityView extends View {
     sessionSets.value = "";
     sessionNotes.value = "";
     variationSelect.innerHTML = "";
+    categoryDropdown.size = 0;
     this._hideCategoryInputDiv();
   }
 }

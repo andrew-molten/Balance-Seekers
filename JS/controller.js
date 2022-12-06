@@ -128,30 +128,6 @@ class App {
     });
   }
 
-  _updateActivityCategory(e) {
-    const category = e.target.innerHTML;
-    const activityInModel = model.activities[idToEdit];
-    if (activityInModel.category === category) {
-      console.log("same category");
-      //Hide the dropMenu
-
-      //Put heading back up without changing anything
-    }
-    if (activityInModel.category !== category) {
-      console.log("different category");
-      // this._pushActivityToCategory(category, activityInModel);
-
-      //Remove this activity from the category that it is currently in
-
-      //Hide dropMenu
-
-      //Update heading with new heading
-    }
-
-    console.log(model.categories);
-    console.log(model.activities[idToEdit]);
-  }
-
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////// ADD NEW ACTIVITY  //////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -307,7 +283,33 @@ class App {
     model.addCategory(input);
     mainView._renderCategoryDropMenu(model.categories);
     mainView._hideCategoryInputDiv();
-    mainView._generateCategoryTabs();
+    mainView._generateCategoryTabs(model.categories);
+  }
+
+  _updateActivityCategory(e) {
+    // If there is not already a category then
+
+    const category = e.target.innerHTML;
+    const activityInModel = model.activities[idToEdit];
+    if (!activityInModel.category) {
+      this._pushActivityToCategory(category, activityInModel);
+      model.setLocalStorage();
+      return;
+    }
+
+    if (activityInModel.category === category) {
+      //Hide the dropMenu & display category
+      activityView._showActivityCategory(model.activities, idToEdit);
+    }
+    if (activityInModel.category !== category) {
+      const previousCategory = activityInModel.category;
+      this._pushActivityToCategory(category, activityInModel);
+
+      //Remove this activity from the category that it is currently in
+      model._changeActivityCategory(idToEdit, category, previousCategory);
+      activityView._showActivityCategory(model.activities, idToEdit);
+      model.setLocalStorage();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -334,8 +336,15 @@ class App {
   _deleteActivity(e) {
     e.preventDefault();
     const element = model.activities[idToEdit];
+    const activityID = element.id;
+    const activityCategory = element.category;
+    const categoryObject = model._findCategory(
+      model.categories,
+      activityCategory
+    );
     model.deletedActivities.push(element);
-    model.activities.splice(idToEdit, 1);
+    model._removeActivityFromArray(model.activities, idToEdit);
+    model._deleteFromCategory(categoryObject, activityID);
     activityView._closeLogSessionForm();
     this._storeSortIDs(model.activities);
     mainView._render(model.activities);

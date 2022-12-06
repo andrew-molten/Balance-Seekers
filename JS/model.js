@@ -174,6 +174,29 @@ class Model {
     console.log(categoryObject);
   }
 
+  _changeActivityCategory(idToEdit, category, previousCategory) {
+    this.activities[idToEdit].category = category;
+    const activityID = this.activities[idToEdit].id;
+    const prevCategoryObject = this._findCategory(
+      this.categories,
+      previousCategory
+    );
+    this._deleteFromCategory(prevCategoryObject, activityID);
+  }
+
+  _deleteFromCategory(categoryObject, activityID) {
+    const objectToDelete = this._findActivityObjectByID(
+      categoryObject.activities,
+      activityID
+    );
+    const arrayIndex = objectToDelete.sortId;
+    this._removeActivityFromArray(categoryObject.activities, arrayIndex);
+  }
+
+  _removeActivityFromArray(array, idToEdit) {
+    array.splice(idToEdit, 1);
+  }
+
   _addVarationToCategory(activityObject, newVariation, category) {
     const id = activityObject.id;
     const categoryObject = this.categories.find(
