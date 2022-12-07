@@ -171,16 +171,13 @@ class Model {
       activityObject.id
     );
     // Guard clause in case category already contains the activityObject
-    console.log(checkIfInCategory);
     if (checkIfInCategory) return;
 
     categoryObject.activities.splice(0, 0, {
       activity: activityObject.activity,
       id: activityObject.id,
-      variation: [],
+      variation: activityObject.variation,
     });
-    console.log(activityObject);
-    console.log(categoryObject);
   }
 
   _changeActivityCategory(idToEdit, category, previousCategory) {
