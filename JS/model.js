@@ -166,11 +166,20 @@ class Model {
   _pushActivityToCategory(activityObject, categoryName) {
     if (this.categories.length < 1) return;
     const categoryObject = this._findCategory(this.categories, categoryName);
+    const checkIfInCategory = this._findActivityObjectByID(
+      categoryObject.activities,
+      activityObject.id
+    );
+    // Guard clause in case category already contains the activityObject
+    console.log(checkIfInCategory);
+    if (checkIfInCategory) return;
+
     categoryObject.activities.splice(0, 0, {
       activity: activityObject.activity,
       id: activityObject.id,
       variation: [],
     });
+    console.log(activityObject);
     console.log(categoryObject);
   }
 

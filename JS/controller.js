@@ -287,20 +287,23 @@ class App {
   }
 
   _updateActivityCategory(e) {
-    // If there is not already a category then
-
     const category = e.target.innerHTML;
     const activityInModel = model.activities[idToEdit];
+    // If there is not already a category then
     if (!activityInModel.category) {
       this._pushActivityToCategory(category, activityInModel);
+      activityInModel.category = category;
       model.setLocalStorage();
+      activityView._showActivityCategory(model.activities, idToEdit);
       return;
     }
 
     if (activityInModel.category === category) {
       //Hide the dropMenu & display category
       activityView._showActivityCategory(model.activities, idToEdit);
+      return;
     }
+
     if (activityInModel.category !== category) {
       const previousCategory = activityInModel.category;
       this._pushActivityToCategory(category, activityInModel);
@@ -309,6 +312,7 @@ class App {
       model._changeActivityCategory(idToEdit, category, previousCategory);
       activityView._showActivityCategory(model.activities, idToEdit);
       model.setLocalStorage();
+      return;
     }
   }
 
