@@ -203,15 +203,18 @@ class Model {
     array.splice(idToEdit, 1);
   }
 
-  _addVarationToCategory(activityObject, newVariation, category) {
+  _addVarationToCategory(activityObject, newVariation, categoryObject) {
     const id = activityObject.id;
-    const categoryObject = this.categories.find(
-      (element) => element.category === category
-    );
-    const activityToEdit = categoryObject.activities.find(
-      (element) => element.id === id
+    const activityToEdit = this._findActivityObjectByID(
+      categoryObject.activities,
+      id
     );
     activityToEdit.variation.push({ type: newVariation });
+  }
+
+  _reOrderActivities(array, idToEdit, activityObject) {
+    const arrayLength = array.length;
+    this._moveActivity(array, idToEdit, arrayLength - 1, activityObject);
   }
 
   _moveActivity = function (array, oldID, newID, element) {

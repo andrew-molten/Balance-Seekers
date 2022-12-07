@@ -132,7 +132,7 @@ class App {
   //////////////////////////////////// ADD NEW ACTIVITY  //////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // Processing Activity
+  // Processing Activity Add
   _processActivity(e) {
     e.preventDefault();
     if (!activityInput.value) return;
@@ -200,15 +200,11 @@ class App {
     addVariationInputContainer.innerHTML = "";
 
     if (model.categories.length > 0) {
-      model._addVarationToCategory(
-        activityObject,
-        input,
-        activityObject.category
-      );
       const categoryObject = model._findCategory(
         model.categories,
         activityObject.category
       );
+      model._addVarationToCategory(activityObject, input, categoryObject);
       this._storeSortIDs(categoryObject.activities);
     }
   }
@@ -230,14 +226,34 @@ class App {
       variationsArray,
       currentVariation
     );
-    const currVarId = variationsArray.indexOf(variationObject);
+    const currVariationIndex = variationsArray.indexOf(variationObject);
     const variationsLength = variationsArray.length;
     model._moveActivity(
       variationsArray,
-      currVarId,
+      currVariationIndex,
       variationsLength - 1,
       variationObject
     );
+    if (activityObject.category) {
+      const category = activityObject.category;
+      const categoryObject = model._findCategory(model.categories, category);
+      const activityID = activityObject.id;
+      const activityInCategory = model._findActivityObjectByID(
+        categoryObject.activities,
+        activityID
+      );
+      const categoryVariationObject = model._findVariationObject(
+        activityInCategory.variation,
+        currentVariation
+      );
+      // this is moving the activity to the top of the list rather than the bottom ////
+      model._moveActivity(
+        activityInCategory.variation,
+        currVariationIndex,
+        variationsLength - 1,
+        categoryVariationObject
+      );
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -360,31 +376,40 @@ class App {
     const activityObject = model.activities[idToEdit];
     const activityID = model.activities[idToEdit].id;
     const activityCategory = model.activities[idToEdit].category;
-    const activitiesLength = model.activities.length;
     const session = activityView._generateSession();
     activityObject.sessions.push(session);
 
     // Re-order activities & variations
-    model._moveActivity(
-      model.activities,
-      idToEdit,
-      activitiesLength - 1,
-      activityObject
-    );
+    model._reOrderActivities(model.activities, idToEdit, activityObject);
     this._reOrderVariation(activityObject);
 
     // Return to MainView
     activityView._closeLogSessionForm();
     this._storeSortIDs(model.activities);
-    mainView._render(model.activities);
 
-    if (model.categories > 0 && activityCategory) {
-      const categoryHoldingActivity =
-        model.categories.activityCategory.activities;
-      const categoryActivityObject = model._findActivityObjectByID(
-        categoryHoldingActivity,
+    mainView._render(model.activities);
+    if (this._checkIfCategoryExists()) {
+      mainView._generateCategoryTabs(model.categories);
+      this._renderCategoryDropMenu();
+    }
+
+    // Re-order activities in it's category array
+    if (model.categories.length > 0 && activityCategory) {
+      const categoryObject = model._findCategory(
+        model.categories,
+        activityCategory
+      );
+      const activityObjectInCategory = model._findActivityObjectByID(
+        categoryObject.activities,
         activityID
       );
+      const sortIDInCategory = activityObjectInCategory.sortId;
+      model._reOrderActivities(
+        categoryObject.activities,
+        sortIDInCategory,
+        activityObjectInCategory
+      );
+      this._storeSortIDs(categoryObject.activities);
     }
   }
 

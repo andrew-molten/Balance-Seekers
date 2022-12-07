@@ -118,6 +118,8 @@ class ActivityView extends View {
     sessionNotes.value = "";
     variationSelect.innerHTML = "";
     categoryDropdown.size = 0;
+    activityCategorySubtitle.style.display = "none";
+    assignToCategoryBtn.style.display = "none";
     this._hideCategoryInputDiv();
   }
 }
