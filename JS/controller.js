@@ -199,7 +199,7 @@ class App {
     mainView._render(model.activities);
     addVariationInputContainer.innerHTML = "";
 
-    if (model.categories.length > 0) {
+    if (model.categories.length > 0 && activityObject.category) {
       const categoryObject = model._findCategory(
         model.categories,
         activityObject.category
