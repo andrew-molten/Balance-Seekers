@@ -10,39 +10,19 @@ class Model {
 
   // export const activities = [];
   // export const deletedActivities = [];
-
-  createActivity = function (activity, category) {
-    this.activities.splice(0, 0, {
-      activity: activity,
-      sessions: [],
-      variation: [],
-      id: this.assignID(),
-    });
-    if (this.categories.length < 1) return this.setLocalStorage();
-    this.activities[0].category = category;
-  };
-
-  assignID() {
-    this.currentHighestID = this.currentHighestID + 1;
-    return this.currentHighestID;
-  }
-
-  addCategory = function (input) {
-    this.categories.push({ category: input, activities: [] });
-    this.setLocalStorage();
-  };
-
-  // Storage
+  ///////////////////////////////////////////////
+  ////////////// STORAGE ////////////////////////
+  ///////////////////////////////////////////////
   setLocalStorage = function () {
-    localStorage.setItem("activities", JSON.stringify(this.activities));
-    localStorage.setItem("categories", JSON.stringify(this.categories));
+    localStorage.setItem("activities", JSON.stringify(this.state.activities));
+    localStorage.setItem("categories", JSON.stringify(this.state.categories));
     localStorage.setItem(
       "deletedActivities",
-      JSON.stringify(this.deletedActivities)
+      JSON.stringify(this.state.deletedActivities)
     );
     localStorage.setItem(
       "currentHighestID",
-      JSON.stringify(this.currentHighestID)
+      JSON.stringify(this.state.currentHighestID)
     );
   };
   getLocalStorage = function () {
@@ -54,49 +34,100 @@ class Model {
     );
 
     if (!currentHighestID) {
-      this.currentHighestID = 0;
+      this.state.currentHighestID = 0;
     } else {
-      this.currentHighestID = +currentHighestID;
+      this.state.currentHighestID = +currentHighestID;
     }
 
     if (!data) {
-      this.activities = [];
+      this.state.activities = [];
     } else {
-      this.activities = data;
+      this.state.activities = data;
       // Trying to fix the ID and sortID properties so that both can exist
       // Keep the Below code in until 1/1/2023 - to fix everyones current date - then remove it
-      this.checkForSortIdAndAssign(this.activities);
-      this.checkIfIDExistsAndCreate(this.activities);
+      this.checkForSortIdAndAssign(this.state.activities);
+      this.checkIfIDExistsAndCreate(this.state.activities);
     }
 
     if (!deletedData) {
-      this.deletedActivities = [];
+      this.state.deletedActivities = [];
     } else {
-      this.deletedActivities = deletedData;
+      this.state.deletedActivities = deletedData;
       // Trying to fix the ID and sortID properties so that both can exist
       // Keep the Below code in until 1/1/2023 - to fix everyones current date - then remove it
-      this.checkForSortIdAndAssign(this.deletedActivities);
-      this.checkIfIDExistsAndCreate(this.deletedActivities);
+      this.checkForSortIdAndAssign(this.state.deletedActivities);
+      this.checkIfIDExistsAndCreate(this.state.deletedActivities);
     }
 
     if (!categories) {
-      this.categories = [];
+      this.state.categories = [];
     } else {
-      this.categories = categories;
+      this.state.categories = categories;
     }
+  };
+
+  // _oldSetLocalStorage() {
+  //   localStorage.setItem("activities", JSON.stringify(this.activities));
+  //   localStorage.setItem("categories", JSON.stringify(this.categories));
+  //   localStorage.setItem(
+  //     "deletedActivities",
+  //     JSON.stringify(this.deletedActivities)
+  //   );
+  //   localStorage.setItem(
+  //     "currentHighestID",
+  //     JSON.stringify(this.currentHighestID)
+  //   );
+  // }
+
+  ///////////////////////////////////////////////
+  //////////////  CREATE  ////////////////////////
+  ///////////////////////////////////////////////
+
+  createActivity = function (activity, category) {
+    this.state.activities.splice(0, 0, {
+      activity: activity,
+      sessions: [],
+      variation: [],
+      id: this.assignID(),
+    });
+    if (this.state.categories.length < 1) return this.setLocalStorage();
+    this.state.activities[0].category = category;
   };
 
   checkIfIDExistsAndCreate(arr) {
     if (arr.length < 1) return;
     if (arr[0].hasOwnProperty("sortId") && !arr[0].hasOwnProperty("id")) {
-      let id = this.currentHighestID;
+      let id = this.state.currentHighestID;
       arr.forEach((el) => {
         id = id + 1;
         el.id = id;
       });
-      this.currentHighestID = id;
+      this.state.currentHighestID = id;
     }
   }
+
+  addCategory = function (input) {
+    this.state.categories.push({ category: input, activities: [] });
+    this.setLocalStorage();
+  };
+
+  assignID() {
+    this.state.currentHighestID = this.state.currentHighestID + 1;
+    return this.state.currentHighestID;
+  }
+
+  _addVarationToCategory(activityObject, newVariation, categoryObject) {
+    const id = activityObject.id;
+    const activityToEdit = this._findActivityObjectByID(
+      categoryObject.activities,
+      id
+    );
+    activityToEdit.variation.push({ type: newVariation });
+  }
+
+  ///////////////////////////////////////////////
+  ////////////////  ID'S  ////////////////////////
+  ///////////////////////////////////////////////
 
   checkForSortIdAndAssign(arr) {
     // Trying to fix the ID and sortID properties so that both can exist
@@ -139,6 +170,10 @@ class Model {
     });
   };
 
+  ///////////////////////////////////////////////////
+  ////////////////  FIND DATA  ////////////////////////
+  ///////////////////////////////////////////////////
+
   _findVariationObject(array, variationName) {
     return array.find((element) => element.type === variationName);
   }
@@ -151,21 +186,29 @@ class Model {
     return array.find((element) => element.id === activityID);
   }
 
+  //////////////////////////////////////////////////
+  ////////////////  MANIPULATE  ////////////////////////
+  //////////////////////////////////////////////////
+
   // Adjusting Activities
   _moveActivityUpOrDown = function (e, direction, movingID) {
     // const movingID = +e.target.closest(".activity_item").id.slice(2);
-    if (movingID === this.activities.length - 1 && direction === "down") return;
+    if (movingID === this.state.activities.length - 1 && direction === "down")
+      return;
     if (movingID === 0 && direction === "up") return;
 
     const newID = direction === "up" ? movingID - 1 : movingID + 1;
-    const element = this.activities[movingID];
+    const element = this.state.activities[movingID];
 
-    this._moveActivity(this.activities, movingID, newID, element);
+    this._moveActivity(this.state.activities, movingID, newID, element);
   };
 
   _pushActivityToCategory(activityObject, categoryName) {
-    if (this.categories.length < 1) return;
-    const categoryObject = this._findCategory(this.categories, categoryName);
+    if (this.state.categories.length < 1) return;
+    const categoryObject = this._findCategory(
+      this.state.categories,
+      categoryName
+    );
     const checkIfInCategory = this._findActivityObjectByID(
       categoryObject.activities,
       activityObject.id
@@ -180,15 +223,29 @@ class Model {
     });
   }
 
+  _moveActivity = function (array, oldID, newID, element) {
+    array.splice(oldID, 1);
+    array.splice(newID, 0, element);
+  };
+
   _changeActivityCategory(idToEdit, category, previousCategory) {
-    this.activities[idToEdit].category = category;
-    const activityID = this.activities[idToEdit].id;
+    this.state.activities[idToEdit].category = category;
+    const activityID = this.state.activities[idToEdit].id;
     const prevCategoryObject = this._findCategory(
-      this.categories,
+      this.state.categories,
       previousCategory
     );
     this._deleteFromCategory(prevCategoryObject, activityID);
   }
+
+  _reOrderActivities(array, idToEdit, activityObject) {
+    const arrayLength = array.length;
+    this._moveActivity(array, idToEdit, arrayLength - 1, activityObject);
+  }
+
+  //////////////////////////////////////////////////
+  ////////////////  DELETE  ////////////////////////
+  //////////////////////////////////////////////////
 
   _deleteFromCategory(categoryObject, activityID) {
     const objectToDelete = this._findActivityObjectByID(
@@ -202,25 +259,6 @@ class Model {
   _removeActivityFromArray(array, idToEdit) {
     array.splice(idToEdit, 1);
   }
-
-  _addVarationToCategory(activityObject, newVariation, categoryObject) {
-    const id = activityObject.id;
-    const activityToEdit = this._findActivityObjectByID(
-      categoryObject.activities,
-      id
-    );
-    activityToEdit.variation.push({ type: newVariation });
-  }
-
-  _reOrderActivities(array, idToEdit, activityObject) {
-    const arrayLength = array.length;
-    this._moveActivity(array, idToEdit, arrayLength - 1, activityObject);
-  }
-
-  _moveActivity = function (array, oldID, newID, element) {
-    array.splice(oldID, 1);
-    array.splice(newID, 0, element);
-  };
 
   reset = function () {
     localStorage.removeItem("activities");

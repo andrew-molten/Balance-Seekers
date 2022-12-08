@@ -36,7 +36,6 @@ class App {
   swipeDirection;
 
   constructor() {
-    // this.reset();
     this.init();
     ////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////////////////////// Event Handlers ////////////////////////////////////////
@@ -58,8 +57,8 @@ class App {
       this.handleswipe();
       if (this.swipeDirection === "left") {
         model._moveActivityUpOrDown(e, "down", idToEdit);
-        this._storeSortIDs(model.activities);
-        mainView._render(model.activities);
+        this._storeSortIDs(model.state.activities);
+        mainView._render(model.state.activities);
       }
       if (this.swipeDirection === "right") {
         this._addVariation(e);
@@ -115,11 +114,11 @@ class App {
     deleteActivityBtn.addEventListener("click", (e) => this._deleteActivity(e));
     activityCategorySubtitle.addEventListener("click", (e) => {
       e.preventDefault();
-      this._renderCategoryDropMenuActivityView(model.categories);
+      this._renderCategoryDropMenuActivityView(model.state.categories);
     });
     assignToCategoryBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      this._renderCategoryDropMenuActivityView(model.categories);
+      this._renderCategoryDropMenuActivityView(model.state.categories);
     });
     categoryDropdown.addEventListener("click", (e) => {
       if (logSessionForm.style.display === "none") return;
@@ -142,9 +141,9 @@ class App {
 
     mainView._clearActivityInputField();
     model.createActivity(activity, category);
-    this._storeSortIDs(model.activities);
-    this._pushActivityToCategory(category, model.activities[0]);
-    mainView._render(model.activities);
+    this._storeSortIDs(model.state.activities);
+    this._pushActivityToCategory(category, model.state.activities[0]);
+    mainView._render(model.state.activities);
   }
 
   _storeSortIDs(array) {
@@ -191,17 +190,17 @@ class App {
     const addVariationInputContainer = document.querySelector(
       ".add_variation_input_container"
     );
-    const activityObject = model.activities[itemID];
+    const activityObject = model.state.activities[itemID];
     const input = addVariationInput.value;
     if (input === "") return;
     activityObject.variation.push({ type: input });
-    this._storeSortIDs(model.activities);
-    mainView._render(model.activities);
+    this._storeSortIDs(model.state.activities);
+    mainView._render(model.state.activities);
     addVariationInputContainer.innerHTML = "";
 
-    if (model.categories.length > 0 && activityObject.category) {
+    if (model.state.categories.length > 0 && activityObject.category) {
       const categoryObject = model._findCategory(
-        model.categories,
+        model.state.categories,
         activityObject.category
       );
       model._addVarationToCategory(activityObject, input, categoryObject);
@@ -236,7 +235,10 @@ class App {
     );
     if (activityObject.category) {
       const category = activityObject.category;
-      const categoryObject = model._findCategory(model.categories, category);
+      const categoryObject = model._findCategory(
+        model.state.categories,
+        category
+      );
       const activityID = activityObject.id;
       const activityInCategory = model._findActivityObjectByID(
         categoryObject.activities,
@@ -265,12 +267,15 @@ class App {
     if (e.target.innerHTML === "All") return this.init();
     console.log(e);
     const category = e.target.closest("span").innerHTML;
-    const categoryObject = model._findCategory(model.categories, category);
-    // categoryView._render(model.activities);
-    categoryView._openCategoryView(categoryObject, model.activities);
+    const categoryObject = model._findCategory(
+      model.state.categories,
+      category
+    );
+    // categoryView._render(model.state.activities);
+    categoryView._openCategoryView(categoryObject, model.state.activities);
   }
   _checkIfCategoryExists() {
-    if (model.categories.length < 1) {
+    if (model.state.categories.length < 1) {
       createCategoryBtn.style.display = "block";
       return false;
     }
@@ -280,13 +285,16 @@ class App {
 
   _renderCategoryDropMenu() {
     mainView._displayCategoryDropMenu();
-    mainView._renderCategoryDropMenu(model.categories);
+    mainView._renderCategoryDropMenu(model.state.categories);
   }
 
   _pushActivityToCategory(category, activityInModel) {
-    if (model.categories.length > 0) {
+    if (model.state.categories.length > 0) {
       model._pushActivityToCategory(activityInModel, category);
-      const categoryObject = model._findCategory(model.categories, category);
+      const categoryObject = model._findCategory(
+        model.state.categories,
+        category
+      );
       this._storeSortIDs(categoryObject.activities);
     }
   }
@@ -297,26 +305,26 @@ class App {
     let input;
     input = categoryInput.value;
     model.addCategory(input);
-    mainView._renderCategoryDropMenu(model.categories);
+    mainView._renderCategoryDropMenu(model.state.categories);
     mainView._hideCategoryInputDiv();
-    mainView._generateCategoryTabs(model.categories);
+    mainView._generateCategoryTabs(model.state.categories);
   }
 
   _updateActivityCategory(e) {
     const category = e.target.innerHTML;
-    const activityInModel = model.activities[idToEdit];
+    const activityInModel = model.state.activities[idToEdit];
     // If there is not already a category then
     if (!activityInModel.category) {
       this._pushActivityToCategory(category, activityInModel);
       activityInModel.category = category;
       model.setLocalStorage();
-      activityView._showActivityCategory(model.activities, idToEdit);
+      activityView._showActivityCategory(model.state.activities, idToEdit);
       return;
     }
 
     if (activityInModel.category === category) {
       //Hide the dropMenu & display category
-      activityView._showActivityCategory(model.activities, idToEdit);
+      activityView._showActivityCategory(model.state.activities, idToEdit);
       return;
     }
 
@@ -326,7 +334,7 @@ class App {
 
       //Remove this activity from the category that it is currently in
       model._changeActivityCategory(idToEdit, category, previousCategory);
-      activityView._showActivityCategory(model.activities, idToEdit);
+      activityView._showActivityCategory(model.state.activities, idToEdit);
       model.setLocalStorage();
       return;
     }
@@ -338,11 +346,11 @@ class App {
 
   _goToActivityView(e) {
     this._removeVariationInputBox();
-    activityView._openActivityView(e, model.activities, idToEdit);
+    activityView._openActivityView(e, model.state.activities, idToEdit);
     mainView._hideCategoryInputDiv();
     this._checkIfCategoryExists();
     if (this._checkIfCategoryExists()) {
-      activityView._showActivityCategory(model.activities, idToEdit);
+      activityView._showActivityCategory(model.state.activities, idToEdit);
     }
   }
 
@@ -355,48 +363,48 @@ class App {
 
   _deleteActivity(e) {
     e.preventDefault();
-    const element = model.activities[idToEdit];
+    const element = model.state.activities[idToEdit];
     const activityID = element.id;
     const activityCategory = element.category;
     const categoryObject = model._findCategory(
-      model.categories,
+      model.state.categories,
       activityCategory
     );
-    model.deletedActivities.push(element);
-    model._removeActivityFromArray(model.activities, idToEdit);
+    model.state.deletedActivities.push(element);
+    model._removeActivityFromArray(model.state.activities, idToEdit);
     model._deleteFromCategory(categoryObject, activityID);
     activityView._closeLogSessionForm();
-    this._storeSortIDs(model.activities);
-    mainView._render(model.activities);
+    this._storeSortIDs(model.state.activities);
+    mainView._render(model.state.activities);
   }
 
   _submitForm(e) {
     e.preventDefault();
     // Create Session and push to state
-    const activityObject = model.activities[idToEdit];
-    const activityID = model.activities[idToEdit].id;
-    const activityCategory = model.activities[idToEdit].category;
+    const activityObject = model.state.activities[idToEdit];
+    const activityID = model.state.activities[idToEdit].id;
+    const activityCategory = model.state.activities[idToEdit].category;
     const session = activityView._generateSession();
     activityObject.sessions.push(session);
 
     // Re-order activities & variations
-    model._reOrderActivities(model.activities, idToEdit, activityObject);
+    model._reOrderActivities(model.state.activities, idToEdit, activityObject);
     this._reOrderVariation(activityObject);
 
     // Return to MainView
     activityView._closeLogSessionForm();
-    this._storeSortIDs(model.activities);
+    this._storeSortIDs(model.state.activities);
 
-    mainView._render(model.activities);
+    mainView._render(model.state.activities);
     if (this._checkIfCategoryExists()) {
-      mainView._generateCategoryTabs(model.categories);
+      mainView._generateCategoryTabs(model.state.categories);
       this._renderCategoryDropMenu();
     }
 
     // Re-order activities in it's category array
-    if (model.categories.length > 0 && activityCategory) {
+    if (model.state.categories.length > 0 && activityCategory) {
       const categoryObject = model._findCategory(
-        model.categories,
+        model.state.categories,
         activityCategory
       );
       const activityObjectInCategory = model._findActivityObjectByID(
@@ -445,14 +453,14 @@ class App {
     model.getLocalStorage();
     /// Test later whether we need the below checkIfCategoryExists
     this._checkIfCategoryExists();
-    console.log(model.activities);
-    console.log(model.deletedActivities);
-    console.log(model.categories);
+    console.log(model.state.activities);
+    console.log(model.state.deletedActivities);
+    console.log(model.state.categories);
     //Only keep this setLocalStorage() until 1/1/2023 when the other functions in model are also removed.
     model.setLocalStorage();
-    mainView._render(model.activities);
+    mainView._render(model.state.activities);
     if (this._checkIfCategoryExists()) {
-      mainView._generateCategoryTabs(model.categories);
+      mainView._generateCategoryTabs(model.state.categories);
       this._renderCategoryDropMenu();
     }
   }
