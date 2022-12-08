@@ -66,6 +66,11 @@ ol li {
   display: none;
 }
 
+#categorySelectMainView {
+  // appearance did not solve the issue
+  appearance: menulist;
+}
+
 #categoryViewBtnsDiv {
   display: "none";
 }
