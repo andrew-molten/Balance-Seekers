@@ -138,12 +138,18 @@ class App {
 
     const activity = activityInput.value;
     const category = categoryDropdown.value;
+    const categoryObject = model._findCategory(
+      model.state.categories,
+      category
+    );
 
     mainView._clearActivityInputField();
     model.createActivity(activity, category);
-    this._storeSortIDs(model.state.activities);
     this._pushActivityToCategory(category, model.state.activities[0]);
-    mainView._render(model.state.activities);
+    this._storeSortIDs(model.state.activities);
+    //Have had to swap mainview.render for init() because it was adding the variation twice for the first activity - and some how this has fixed the iss
+    // mainView._render(model.state.activities);
+    this.init();
   }
 
   _storeSortIDs(array) {
@@ -192,11 +198,12 @@ class App {
     );
     const activityObject = model.state.activities[itemID];
     const input = addVariationInput.value;
+    addVariationInputContainer.innerHTML = "";
     if (input === "") return;
+
     activityObject.variation.push({ type: input });
     this._storeSortIDs(model.state.activities);
     mainView._render(model.state.activities);
-    addVariationInputContainer.innerHTML = "";
 
     if (model.state.categories.length > 0 && activityObject.category) {
       const categoryObject = model._findCategory(
@@ -248,7 +255,6 @@ class App {
         activityInCategory.variation,
         currentVariation
       );
-      // this is moving the activity to the top of the list rather than the bottom ////
       model._moveActivity(
         activityInCategory.variation,
         currVariationIndex,
@@ -295,6 +301,7 @@ class App {
         model.state.categories,
         category
       );
+      console.log("_pushActivityToCategory");
       this._storeSortIDs(categoryObject.activities);
     }
   }
@@ -451,8 +458,6 @@ class App {
   }
   init() {
     model.getLocalStorage();
-    /// Test later whether we need the below checkIfCategoryExists
-    this._checkIfCategoryExists();
     console.log(model.state.activities);
     console.log(model.state.deletedActivities);
     console.log(model.state.categories);

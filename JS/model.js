@@ -118,6 +118,7 @@ class Model {
 
   _addVarationToCategory(activityObject, newVariation, categoryObject) {
     const id = activityObject.id;
+
     const activityToEdit = this._findActivityObjectByID(
       categoryObject.activities,
       id
@@ -205,6 +206,7 @@ class Model {
 
   _pushActivityToCategory(activityObject, categoryName) {
     if (this.state.categories.length < 1) return;
+
     const categoryObject = this._findCategory(
       this.state.categories,
       categoryName
