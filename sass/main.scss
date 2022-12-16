@@ -71,8 +71,12 @@ ol li {
   appearance: menulist;
 }
 
+#assignCategoryBtn {
+  display: none;
+}
+
 #categoryViewBtnsDiv {
-  display: "none";
+  display: none;
 }
 
 #variationSelect {

@@ -18,6 +18,7 @@ const activityCategorySubtitle = document.getElementById(
 const categoryDropdownDiv = document.getElementById(
   "categorySelectMainViewDiv"
 );
+const assignCategoryBtn = document.getElementById("assignCategoryBtn");
 
 class ActivityView extends View {
   _generateMarkup() {
@@ -103,10 +104,12 @@ class ActivityView extends View {
     createCategoryBtn.style.display = "none";
     categoryDropdownDiv.style.display = "block";
     categoryDropdown.style.display = "inline-block";
+    assignCategoryBtn.style.display = "inline-block";
     categoryDropdown.size = categories.length > 5 ? 3 : categories.length;
   }
 
   _closeLogSessionForm(e) {
+    console.log("closing");
     logSessionForm.style.display = "none";
     addActivityBox.style.display = "block";
     activityHeading.style.display = "none";

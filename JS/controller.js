@@ -25,6 +25,7 @@ const activityCategorySubtitle = document.getElementById(
   "activityCategorySubtitle"
 );
 const assignToCategoryBtn = document.getElementById("assignToCategoryBtn");
+const assignCategoryBtn = document.getElementById("assignCategoryBtn");
 
 let idToEdit;
 
@@ -109,7 +110,10 @@ class App {
 
     /////// ACTIVITY VIEW ///////////
 
-    closeForm.addEventListener("click", activityView._closeLogSessionForm());
+    closeForm.addEventListener("click", (e) => {
+      activityView._closeLogSessionForm();
+      this.init();
+    });
     submitFormBtn.addEventListener("click", (e) => this._submitForm(e));
     deleteActivityBtn.addEventListener("click", (e) => this._deleteActivity(e));
     activityCategorySubtitle.addEventListener("click", (e) => {
@@ -120,11 +124,18 @@ class App {
       e.preventDefault();
       this._renderCategoryDropMenuActivityView(model.state.categories);
     });
-    categoryDropdown.addEventListener("click", (e) => {
+    assignCategoryBtn.addEventListener("click", (e) => {
+      e.preventDefault();
       if (logSessionForm.style.display === "none") return;
       if (logSessionForm.style.display === "block")
         return this._updateActivityCategory(e);
     });
+
+    // categoryDropdown.addEventListener("click", (e) => {
+    //   if (logSessionForm.style.display === "none") return;
+    //   if (logSessionForm.style.display === "block")
+    //     return this._updateActivityCategory(e);
+    // });
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,7 +329,8 @@ class App {
   }
 
   _updateActivityCategory(e) {
-    const category = e.target.innerHTML;
+    // const category = e.target.innerHTML;
+    const category = categoryDropdown.value;
     const activityInModel = model.state.activities[idToEdit];
     // If there is not already a category then
     if (!activityInModel.category) {
