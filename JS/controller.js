@@ -28,6 +28,7 @@ const assignToCategoryBtn = document.getElementById("assignToCategoryBtn");
 const assignCategoryBtn = document.getElementById("assignCategoryBtn");
 
 let idToEdit;
+let actualIdToEdit;
 
 class App {
   touchstartX = 0;
@@ -75,6 +76,25 @@ class App {
 
     activitiesDisplay.addEventListener("click", (e) => {
       e.preventDefault();
+      // Guard clauses to stop logSession Form if variation text box exists or button is pressed
+      if (
+        e.target.classList.contains("add_variation_input") ||
+        e.target.classList.contains("add_variation_btn")
+      )
+        return;
+
+      this._goToActivityView(e);
+    });
+
+    categoryViewDiv.addEventListener("touchstart", (e) => {
+      this._setIdToEdit(e);
+      console.log(this.idToEdit);
+      console.log(e);
+      this.touchstartX = e.changedTouches[0].screenX;
+      this.touchstartY = e.changedTouches[0].screenY;
+    });
+
+    categoryViewDiv.addEventListener("click", (e) => {
       // Guard clauses to stop logSession Form if variation text box exists or button is pressed
       if (
         e.target.classList.contains("add_variation_input") ||
@@ -177,7 +197,7 @@ class App {
     this._removeVariationInputBox();
 
     const variationBlock = document.getElementById(
-      `sortId${idToEdit}`
+      `sortId${this.idToEdit}`
     ).lastElementChild;
 
     variationBlock.insertAdjacentHTML(
@@ -198,7 +218,7 @@ class App {
 
     addVariationBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      this._processAddVariation(e, idToEdit);
+      this._processAddVariation(e, this.idToEdit);
     });
   }
 
@@ -331,19 +351,19 @@ class App {
   _updateActivityCategory(e) {
     // const category = e.target.innerHTML;
     const category = categoryDropdown.value;
-    const activityInModel = model.state.activities[idToEdit];
+    const activityInModel = model.state.activities[this.idToEdit];
     // If there is not already a category then
     if (!activityInModel.category) {
       this._pushActivityToCategory(category, activityInModel);
       activityInModel.category = category;
       model.setLocalStorage();
-      activityView._showActivityCategory(model.state.activities, idToEdit);
+      activityView._showActivityCategory(model.state.activities, this.idToEdit);
       return;
     }
 
     if (activityInModel.category === category) {
       //Hide the dropMenu & display category
-      activityView._showActivityCategory(model.state.activities, idToEdit);
+      activityView._showActivityCategory(model.state.activities, this.idToEdit);
       return;
     }
 
@@ -352,8 +372,8 @@ class App {
       this._pushActivityToCategory(category, activityInModel);
 
       //Remove this activity from the category that it is currently in
-      model._changeActivityCategory(idToEdit, category, previousCategory);
-      activityView._showActivityCategory(model.state.activities, idToEdit);
+      model._changeActivityCategory(this.idToEdit, category, previousCategory);
+      activityView._showActivityCategory(model.state.activities, this.idToEdit);
       model.setLocalStorage();
       return;
     }
@@ -365,11 +385,22 @@ class App {
 
   _goToActivityView(e) {
     this._removeVariationInputBox();
-    activityView._openActivityView(e, model.state.activities, idToEdit);
+    const activityObject = model._findActivityObjectByID(
+      model.state.activities,
+      actualIdToEdit
+    );
+    activityView._openActivityView(
+      e,
+      model.state.activities,
+      activityObject.sortId,
+      actualIdToEdit,
+      activityObject
+    );
+    this.idToEdit = activityObject.sortId;
     mainView._hideCategoryInputDiv();
     this._checkIfCategoryExists();
     if (this._checkIfCategoryExists()) {
-      activityView._showActivityCategory(model.state.activities, idToEdit);
+      activityView._showActivityCategory(model.state.activities, this.idToEdit);
     }
   }
 
@@ -382,7 +413,7 @@ class App {
 
   _deleteActivity(e) {
     e.preventDefault();
-    const element = model.state.activities[idToEdit];
+    const element = model.state.activities[this.idToEdit];
     const activityID = element.id;
     const activityCategory = element.category;
     const categoryObject = model._findCategory(
@@ -390,7 +421,7 @@ class App {
       activityCategory
     );
     model.state.deletedActivities.push(element);
-    model._removeActivityFromArray(model.state.activities, idToEdit);
+    model._removeActivityFromArray(model.state.activities, this.idToEdit);
     model._deleteFromCategory(categoryObject, activityID);
     activityView._closeLogSessionForm();
     this._storeSortIDs(model.state.activities);
@@ -400,14 +431,19 @@ class App {
   _submitForm(e) {
     e.preventDefault();
     // Create Session and push to state
-    const activityObject = model.state.activities[idToEdit];
-    const activityID = model.state.activities[idToEdit].id;
-    const activityCategory = model.state.activities[idToEdit].category;
+    const activityObject = model.state.activities[this.idToEdit];
+    console.log(activityObject);
+    const activityID = model.state.activities[this.idToEdit].id;
+    const activityCategory = model.state.activities[this.idToEdit].category;
     const session = activityView._generateSession();
     activityObject.sessions.push(session);
 
     // Re-order activities & variations
-    model._reOrderActivities(model.state.activities, idToEdit, activityObject);
+    model._reOrderActivities(
+      model.state.activities,
+      this.idToEdit,
+      activityObject
+    );
     this._reOrderVariation(activityObject);
 
     // Return to MainView
@@ -446,7 +482,10 @@ class App {
 
   _setIdToEdit(e) {
     // Returns "sortId"
-    idToEdit = +e.target.closest(".activity_item").id.slice(6);
+    idToEdit = +e.target.closest(".activity_item").getAttribute("data-sortId");
+    actualIdToEdit = +e.target
+      .closest(".activity_item")
+      .getAttribute("data-actualId");
   }
 
   handleswipe() {

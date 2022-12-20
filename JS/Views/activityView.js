@@ -22,7 +22,7 @@ const assignCategoryBtn = document.getElementById("assignCategoryBtn");
 
 class ActivityView extends View {
   _generateMarkup() {
-    const markup = this._activities[this._idToEdit].activity;
+    const markup = this._activityObject.activity;
     return markup;
   }
 
@@ -37,12 +37,14 @@ class ActivityView extends View {
     );
   }
 
-  _openActivityView(e, activities, idToEdit) {
+  _openActivityView(e, activities, idToEdit, actualIdToEdit, activityObject) {
+    this._activityObject = activityObject;
+    console.log(this._activityObject);
     logSessionForm.style.display = "block";
     addActivityBox.style.display = "none";
     activityHeading.style.display = "block";
     this._clearCategoryViewBtns();
-    this._render(activities, idToEdit);
+    this._render(activities, idToEdit, actualIdToEdit);
 
     // Insert todays date
     this._setDate(dateOnActivityForm);
@@ -54,6 +56,8 @@ class ActivityView extends View {
   }
 
   _showActivityCategory(activities, idToEdit) {
+    console.log(idToEdit);
+    console.log(activities[idToEdit]);
     const activityCategory = activities[idToEdit].category;
     categoryDropdown.style.display = "none";
     activityCategorySubtitle.innerHTML = "";

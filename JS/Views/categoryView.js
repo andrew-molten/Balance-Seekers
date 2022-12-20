@@ -44,7 +44,7 @@ class CategoryView extends View {
     // }
 
     return `
-    <li class="activity_item" id="sortId${sortId}">${activity.activity} 
+    <li class="activity_item" id="sortId${sortId}" data-sortId="${sortId}" data-actualId="${activity.id}">${activity.activity} 
         <ol class="sub_category">
         ${variations}
         </ol>

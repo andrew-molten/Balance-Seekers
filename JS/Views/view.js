@@ -15,10 +15,11 @@ export default class View {
   _activities;
   _idToEdit;
 
-  _render(activities, idToEdit) {
+  _render(activities, idToEdit, actualIdToEdit) {
     this._clear();
     this._activities = activities;
     this._idToEdit = idToEdit;
+    this._actualIdToEdit = actualIdToEdit;
     const markup = this._generateMarkup();
     this._insertMarkup(markup);
   }

@@ -215,6 +215,12 @@ class Model {
       categoryObject.activities,
       activityObject.id
     );
+    let latestSessionDate = "";
+    if (activityObject.sessions[0]) {
+      const sessionsLength = activityObject.sessions.length;
+      latestSessionDate = activityObject.sessions[sessionsLength - 1].date;
+    }
+
     // Guard clause in case category already contains the activityObject
     if (checkIfInCategory) return;
 
@@ -222,6 +228,7 @@ class Model {
       activity: activityObject.activity,
       id: activityObject.id,
       variation: activityObject.variation,
+      latestSessionDate: latestSessionDate,
     });
   }
 

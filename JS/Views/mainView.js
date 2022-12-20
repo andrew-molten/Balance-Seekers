@@ -35,7 +35,9 @@ class MainView extends View {
     }
 
     return `
-    <li class="activity_item" id="sortId${sortId}">${activity.activity} ${
+    <li class="activity_item" id="sortId${sortId}" data-sortId="${sortId}" data-actualId="${
+      activity.id
+    }">${activity.activity} ${
       activitySessionsLength > 0
         ? `<span class="lastWorkout">${lastWorkoutDate}</span>`
         : ""
