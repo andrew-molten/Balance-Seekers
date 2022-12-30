@@ -197,7 +197,7 @@ class App {
     this._removeVariationInputBox();
 
     const variationBlock = document.getElementById(
-      `sortId${this.idToEdit}`
+      `sortId${idToEdit}`
     ).lastElementChild;
 
     variationBlock.insertAdjacentHTML(
@@ -218,7 +218,7 @@ class App {
 
     addVariationBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      this._processAddVariation(e, this.idToEdit);
+      this._processAddVariation(e, idToEdit);
     });
   }
 
