@@ -1,4 +1,4 @@
-@import "header";
+@import 'header';
 
 ol {
   padding-inline-start: 0px;
@@ -30,7 +30,7 @@ ol li {
   // position: relative;
   padding: 0.25rem 2rem;
   margin: 0.5rem;
-  border-radius: 10rem;
+  border-radius: 25px;
   width: 80%;
   border-style: solid;
   border-color: rgb(0, 110, 255);
